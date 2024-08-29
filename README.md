@@ -9,7 +9,7 @@ Proyek ini adalah sebuah sistem kontrol kualitas udara berbasis kecerdasan buata
 - Notifikasi dan Alarm: Mengirimkan notifikasi atau alarm kepada pengguna jika ada parameter kualitas udara yang berada di luar batas yang ditentukan.
 - aporan dan Visualisasi Data: Menyediakan laporan berkala dan visualisasi data historis untuk analisis lebih lanjut dengan platform Website dan Mobile App.
 - Penyemprotan Air (Mist Fan): Mengaktifkan penyemprot air untuk menyemprotkan embun ke udara guna menangkap partikel debu dan polutan.
-- ipas Ekstraksi Udara (Exhaust Fan): Mengaktifkan kipas ekstraksi untuk menarik udara kotor keluar dari greenhouse dan menggantinya dengan udara segar.
+- Kipas Ekstraksi Udara (Exhaust Fan): Mengaktifkan kipas ekstraksi untuk menarik udara kotor keluar dari greenhouse dan menggantinya dengan udara segar.
 - Integrasi dengan Platform Web dan Mobile: Menyediakan antarmuka pengguna yang mudah digunakan melalui aplikasi web dan mobile untuk memantau, mengontrol, dan menganalisis data kualitas udara dari mana saja.
 
 
