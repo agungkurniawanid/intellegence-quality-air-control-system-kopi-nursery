@@ -1,0 +1,11 @@
+====================
+flask --app index --debug run -> menjalankan server project flask jika belum ada .env
+====================
+
+====================
+pip install python-dotenv -> digunakan agar file .env terbaca sebelum menjalankan command yang di set di .env
+====================
+
+====================
+flask run -> menjalankan project flask ketika sudah membuat atau set file .env
+====================
