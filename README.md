@@ -1,5 +1,5 @@
 
-# Intelligence Quality Control System Greenhouse Kopi Nursery
+# Intelligence Quality Air Control System Greenhouse Kopi Nursery
 
 Proyek ini adalah sebuah sistem kontrol kualitas udara berbasis kecerdasan buatan yang dirancang khusus untuk nursery kopi. Sistem ini bertujuan untuk memonitor, menganalisis, dan mengontrol kualitas udara secara real-time untuk memastikan kondisi optimal bagi pertumbuhan tanaman kopi di nursery.
 
