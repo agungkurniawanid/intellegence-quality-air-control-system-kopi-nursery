@@ -1,3 +1,8 @@
+### Technology
+![Static Badge](https://img.shields.io/badge/Laravel-%23FF2D20?style=flat&logo=laravel&logoColor=white&logoSize=auto)
+![Static Badge](https://img.shields.io/badge/Flask-%23000000?style=flat&logo=flask&logoColor=white&logoSize=auto)
+![Static Badge](https://img.shields.io/badge/Flutter-%2302569B?style=flat&logo=flutter&logoColor=white&logoSize=auto)
+![Static Badge](https://img.shields.io/badge/TailwindCSS-%2338B2AC?style=flat&logo=tailwindcss&logoColor=white&logoSize=auto)
 
 # Intelligence Quality Air Control System Greenhouse Kopi Nursery
 
@@ -11,46 +16,4 @@ Proyek ini adalah sebuah sistem kontrol kualitas udara berbasis kecerdasan buata
 - Penyemprotan Air (Mist Fan): Mengaktifkan penyemprot air untuk menyemprotkan embun ke udara guna menangkap partikel debu dan polutan.
 - Kipas Ekstraksi Udara (Exhaust Fan): Mengaktifkan kipas ekstraksi untuk menarik udara kotor keluar dari greenhouse dan menggantinya dengan udara segar.
 - Integrasi dengan Platform Web dan Mobile: Menyediakan antarmuka pengguna yang mudah digunakan melalui aplikasi web dan mobile untuk memantau, mengontrol, dan menganalisis data kualitas udara dari mana saja.
-
-
-## Authors
-
-- [@agungkurniawan.dev](https://www.instagram.com/agungkurniawan.dev?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==) / [WhatsApp](https://wa.me/6281331650909)
-- [@syah_r12](https://www.instagram.com/syah_r12/?utm_source=ig_web_button_share_sheet)
-- [@bintangandk_](https://www.instagram.com/bintangandk_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==)
-- [@mutiaraacd__](https://www.instagram.com/mutiaraacd__?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==)
-- [@it__s.na](https://www.instagram.com/it__s.na?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==)
-
-## Tech Stack
-
-**Client:** React / Nextjs, TailwindCSS, Flutter
-
-**Server:** Flask Python
-
-
-## 🚀 About Me
-I'm a full stack developer...
-## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://agungkurniawandev.com/)
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/agung-k-74530028b/)
-
-
-## 🛠 Skills
-Language Programming:
-
-- HTML
-- CSS
-- JavaScript
-- PHP
-- Dart
-- Python
-
-Frameworks:
-
-- Reactjs / Nextjs
-- Laravel
-- Nodejs
-- Flutter
-- Flask Python
-- Tailwindcss
 
