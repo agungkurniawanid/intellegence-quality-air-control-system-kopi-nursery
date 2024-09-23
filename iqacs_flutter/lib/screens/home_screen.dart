@@ -31,6 +31,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 10.0,
+                  childAspectRatio: 0.9,
                   children: const [
                     CustomCardSprayer(),
                     CustomCardReportInformation(),

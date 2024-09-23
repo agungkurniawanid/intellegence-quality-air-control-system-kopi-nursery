@@ -75,7 +75,7 @@ class CustomMainCard extends ConsumerWidget {
                     ),
                     const Gap(5),
                     Text(
-                      "22° C / Ideal",
+                      "22,21 % / Ideal",
                       style: GoogleFonts.poppins(
                           color: const Color(0xFF171717),
                           fontSize: 18,
@@ -133,15 +133,14 @@ class CustomCardSuhu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GridView.builder(
       shrinkWrap: true,
-      physics:
-          const NeverScrollableScrollPhysics(), // Disable scrolling in GridView
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Display 2 cards per row
+        crossAxisCount: 2,
         crossAxisSpacing: 10.0,
         mainAxisSpacing: 10.0,
         childAspectRatio: 0.9,
       ),
-      itemCount: 2, // Number of items in grid (can be changed as needed)
+      itemCount: 2,
       itemBuilder: (BuildContext context, int index) {
         return Container(
           padding: const EdgeInsets.all(14.0),
@@ -175,7 +174,7 @@ class CustomCardSuhu extends ConsumerWidget {
               const SizedBox(height: 10),
               Center(
                 child: Text(
-                  index != 0 ? "28° C" : "18° C",
+                  index != 0 ? "28.32 %" : "18° C",
                   style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
                       fontSize: 44,
@@ -184,19 +183,24 @@ class CustomCardSuhu extends ConsumerWidget {
               ),
               const Gap(8),
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Align text to start
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    index != 0 ? "Kelembapan" : "Suhu",
-                    style: GoogleFonts.poppins(
-                        color: const Color(0xFF171717),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Text(
+                        index != 0 ? "Kelembapan" : "Suhu",
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF171717),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Icon(Icons.arrow_right_alt,
+                          color: const Color(0xFF171717), size: 20),
+                    ],
                   ),
                   Text(
                     index != 0
-                        ? "Ideal: 22° C - 28° C"
+                        ? "Ideal: 22.50 % - 27.50 %"
                         : "Ideal: 18° C - 28° C",
                     style: GoogleFonts.poppins(
                         color: const Color(0xFF171717),
