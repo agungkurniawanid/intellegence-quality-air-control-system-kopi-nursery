@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'screens/login_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:iqacs/screens/splash_screen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'IQACS Kopi Nursery',
-      home: LoginScreen(title: 'Login | IQACS Kopi Nursery'),
+      home: SplashScreen(),
     );
   }
 }

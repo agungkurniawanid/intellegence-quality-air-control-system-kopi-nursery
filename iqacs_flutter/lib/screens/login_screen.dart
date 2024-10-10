@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/screens/page_screen.dart';
 import 'package:iqacs/widgets/custom_input.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class LoginScreen extends ConsumerWidget {
   final String title;
@@ -27,7 +28,7 @@ class LoginScreen extends ConsumerWidget {
                     image: const AssetImage('assets/images/logo.png'),
                     fit: BoxFit.cover,
                     width: MediaQuery.of(context).size.width / 2,
-                  ),
+                  ).animate().fadeIn(duration: 1000.ms),
                   const Gap(20),
                   Column(
                     children: [
@@ -37,14 +38,14 @@ class LoginScreen extends ConsumerWidget {
                             color: const Color(0xFF171717),
                             fontSize: 50,
                             fontWeight: FontWeight.w900),
-                      ),
+                      ).animate().fadeIn(duration: 1500.ms),
                       Text(
                         "IQACS Kopi Nursery",
                         style: GoogleFonts.poppins(
                             color: const Color(0xFF42A510),
                             fontSize: 24,
                             fontWeight: FontWeight.bold),
-                      ),
+                      ).animate().fadeIn(duration: 3000.ms),
                     ],
                   ),
                   const Gap(60),
@@ -57,21 +58,23 @@ class LoginScreen extends ConsumerWidget {
                           placeholder: "contoh: 08xxxxxxxxxx",
                           type: TextInputType.number,
                           labelText: "Masukkan Nomor Telephone:",
-                        ),
+                        ).animate().fadeIn(duration: 1200.ms).slideX(),
                         const Gap(20),
                         const CustomInput(
                           placeholder: ".......",
                           type: TextInputType.visiblePassword,
                           labelText: "Masukkan Password:",
                           isPassword: true,
-                        ),
+                        ).animate().fadeIn(duration: 1200.ms).slideX(),
                         const Gap(10),
                         Text("Lupa Password?",
-                            style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF42A510),
-                                decoration: TextDecoration.underline)),
+                                style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF42A510),
+                                    decoration: TextDecoration.underline))
+                            .animate()
+                            .fadeIn(duration: 1200.ms),
                         const Gap(20),
                         ElevatedButton(
                           onPressed: () {
@@ -95,7 +98,10 @@ class LoginScreen extends ConsumerWidget {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white),
                           ),
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 1200.ms)
+                            .slideY(begin: 1.0),
                       ],
                     ),
                   ),

@@ -194,8 +194,8 @@ class CustomCardSuhu extends ConsumerWidget {
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),
-                      Icon(Icons.arrow_right_alt,
-                          color: const Color(0xFF171717), size: 20),
+                      const Icon(Icons.arrow_right_alt,
+                          color: Color(0xFF171717), size: 20),
                     ],
                   ),
                   Text(
