@@ -14,9 +14,7 @@ class PageScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return const Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: MainContent(),
-      ),
+      body: SafeArea(child: MainContent()),
       bottomNavigationBar: CustomBottomNavigationBarWidget(),
     );
   }

@@ -41,8 +41,8 @@ class OnboardingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = ref.watch(pageControllerProvider);
-    final currentIndex = ref.watch(selectedIndexProvider);
+    final pageController = ref.watch(pageControllerOnboardingProvider);
+    final currentIndex = ref.watch(selectedIndexOnboardingProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -54,7 +54,8 @@ class OnboardingScreen extends ConsumerWidget {
                 controller: pageController,
                 itemCount: onboardingData.length,
                 onPageChanged: (index) {
-                  ref.read(selectedIndexProvider.notifier).state = index;
+                  ref.read(selectedIndexOnboardingProvider.notifier).state =
+                      index;
                 },
                 itemBuilder: (context, index) {
                   final item = onboardingData[index];

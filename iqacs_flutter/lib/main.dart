@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
 import 'package:iqacs/screens/splash_screen.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-    ),
-  );
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      child: ResponsiveBreakpoints.builder(
+        breakpoints: [
+          const Breakpoint(start: 0, end: 600, name: 'MOBILE_SMALL'),
+          const Breakpoint(start: 600, end: 768, name: 'MOBILE_LARGE'),
+          const Breakpoint(start: 768, end: 1024, name: 'TABLET'),
+          const Breakpoint(start: 1024, end: 1280, name: 'LAPTOP_SMALL'),
+          const Breakpoint(start: 1280, end: 1536, name: 'LAPTOP_MEDIUM'),
+          const Breakpoint(start: 1536, end: 1920, name: 'LATPOP_LARGE'),
+          const Breakpoint(start: 1920, end: double.infinity, name: '4K'),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }
