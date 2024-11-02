@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+#menu-btn:checked ~ #menu {
+    display: block;
+}
+
+.service-card {
+    transition: transform 0.3s, cursor 0.3s;
+}
+
+.service-card:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+#prev-btn, #next-btn {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#prev-btn:hover {
+    background-color: #4C4B16;
+    color: white;
+}
+
+#next-btn:hover {
+    background-color: white;
+    color: #4C4B16;
+}
