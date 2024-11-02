@@ -106,6 +106,16 @@ flutter:
     - assets/images/onboarding/onboarding2.png
     - assets/images/onboarding/onboarding3.png
     - assets/images/splash/splash.jpg
+    - assets/images/masonry/masonry (1).jpg
+    - assets/images/masonry/masonry (2).jpg
+    - assets/images/masonry/masonry (3).jpg
+    - assets/images/masonry/masonry (4).jpg
+    - assets/images/masonry/masonry (5).jpg
+    - assets/images/masonry/masonry (6).jpg
+    - assets/images/masonry/masonry (7).jpg
+    - assets/images/masonry/masonry (8).jpg
+    - assets/images/masonry/masonry (9).jpg
+    - assets/images/masonry/masonry (10).jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

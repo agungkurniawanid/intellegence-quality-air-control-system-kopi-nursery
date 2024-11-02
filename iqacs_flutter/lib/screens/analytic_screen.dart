@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class AnalyticScreen extends ConsumerStatefulWidget {
   const AnalyticScreen({super.key});
@@ -202,6 +203,58 @@ class _TabBarViewWidgetScannerScreenState
     extends ConsumerState<TabBarViewWidgetScannerScreen> {
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> masonryminer = [
+      {
+        'image': 'assets/images/masonry/masonry (1).jpg',
+        'diagnosis': '(700) Miner',
+        'accuracy': '90,21%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (2).jpg',
+        'diagnosis': '(701) Miner',
+        'accuracy': '88,50%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (3).jpg',
+        'diagnosis': '(702) Rust',
+        'accuracy': '92,50%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (4).jpg',
+        'diagnosis': '(703) Rust',
+        'accuracy': '85,00%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (5).jpg',
+        'diagnosis': '(704) Phoma',
+        'accuracy': '91,00%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (6).jpg',
+        'diagnosis': '(705) Phoma',
+        'accuracy': '87,50%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (7).jpg',
+        'diagnosis': '(706) Nodisease',
+        'accuracy': '100,00%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (8).jpg',
+        'diagnosis': '(707) Nodisease',
+        'accuracy': '95,00%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (9).jpg',
+        'diagnosis': '(708) Miner',
+        'accuracy': '89,75%',
+      },
+      {
+        'image': 'assets/images/masonry/masonry (10).jpg',
+        'diagnosis': '(709) Rust',
+        'accuracy': '90,00%',
+      },
+    ];
     return DefaultTabController(
       length: 5,
       child: Column(
@@ -211,10 +264,9 @@ class _TabBarViewWidgetScannerScreenState
             isScrollable: true,
             tabAlignment: TabAlignment.center,
             labelColor: Colors.black,
-            indicatorWeight: 2,
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide.none,
-            ),
+            indicatorWeight: 5,
+            dividerColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.tab,
             unselectedLabelColor: const Color(0xFF9C9C9C),
             tabs: [
               Tab(
@@ -272,9 +324,37 @@ class _TabBarViewWidgetScannerScreenState
           Expanded(
             child: TabBarView(
               children: [
-                Center(
-                    child: Text('Konten Semua',
-                        style: GoogleFonts.poppins(fontSize: 16))),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: MasonryGridView.builder(
+                    itemCount: 10,
+                    gridDelegate:
+                        const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            left: 2.0, right: 2.0, top: 8.0, bottom: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: Image.asset(
+                                  masonryminer[index]['image'] ?? '',
+                                  fit: BoxFit.cover,
+                                )),
+                            const SizedBox(height: 2.0),
+                            Text('(700) Miner, 90,21% Accuracy',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 14, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 Center(
                     child: Text('Konten Miner',
                         style: GoogleFonts.poppins(fontSize: 16))),
