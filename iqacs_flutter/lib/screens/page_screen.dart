@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iqacs/providers/page_provider.dart';
 import 'package:iqacs/screens/home_screen.dart';
+import 'package:iqacs/screens/profile_screen.dart';
 import 'package:iqacs/screens/report_screen.dart';
 import 'package:iqacs/screens/scanner_screen.dart';
-import 'package:iqacs/screens/user_screen.dart';
 import 'package:iqacs/widgets/custom_button_nav.dart';
 
 class PageScreen extends ConsumerWidget {
@@ -30,7 +30,7 @@ class MainContent extends ConsumerWidget {
       const Center(child: HomeScreen()),
       const Center(child: ScannerScreen()),
       const Center(child: ReportScreen()),
-      const Center(child: UserScreen()),
+      const Center(child: ProfileScreen()),
     ];
 
     return PageView(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:iqacs/screens/detail_analytic_screen.dart';
 
 class AnalyticScreen extends ConsumerStatefulWidget {
   const AnalyticScreen({super.key});
@@ -333,23 +334,34 @@ class _TabBarViewWidgetScannerScreenState
                       crossAxisCount: 2,
                     ),
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 2.0, right: 2.0, top: 8.0, bottom: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(15.0),
-                                child: Image.asset(
-                                  masonryminer[index]['image'] ?? '',
-                                  fit: BoxFit.cover,
-                                )),
-                            const SizedBox(height: 2.0),
-                            Text('(700) Miner, 90,21% Accuracy',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14, fontWeight: FontWeight.w600)),
-                          ],
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DetailAnalyticScreen()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 2.0, right: 2.0, top: 8.0, bottom: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: Image.asset(
+                                    masonryminer[index]['image'] ?? '',
+                                    fit: BoxFit.cover,
+                                  )),
+                              const SizedBox(height: 2.0),
+                              Text('(700) Miner, 90,21% Accuracy',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
+                            ],
+                          ),
                         ),
                       );
                     },
