@@ -15,13 +15,50 @@ final loginProvider =
 class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
   LoginNotifier() : super(const AsyncValue.data(null));
 
-  // Method untuk logout
-  void logout() {
-    state = const AsyncValue.data(null);
+  Future<void> logout() async {
+    try {
+      state = const AsyncValue.loading();
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('access_token');
+
+      final response = await http.post(
+        Uri.parse(ApiConstants.logoutEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(ApiConstants.timeoutDuration);
+
+      log('Logout Response status: ${response.statusCode}');
+      log('Logout Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        await prefs.remove('access_token');
+        state = const AsyncValue.data(null);
+      } else {
+        Map<String, dynamic> errorBody = json.decode(response.body);
+        String errorMessage = errorBody['message'] ?? 'Logout gagal';
+        state = AsyncValue.error(Exception(errorMessage), StackTrace.current);
+        log('Logout error message: $errorMessage');
+      }
+    } on http.ClientException catch (_) {
+      state = AsyncValue.error(
+          Exception('Koneksi gagal: Periksa koneksi internet anda'),
+          StackTrace.current);
+      log('Koneksi gagal: Periksa koneksi internet anda');
+    } on TimeoutException catch (_) {
+      state = AsyncValue.error(
+          Exception('Timeout: Server tidak merespon'), StackTrace.current);
+      log('Timeout: Server tidak merespon');
+    } catch (e) {
+      state = AsyncValue.error(
+          Exception('Terjadi kesalahan: ${e.toString()}'), StackTrace.current);
+      log('Terjadi kesalahan: ${e.toString()}');
+    }
   }
 
   Future<void> login(String identifier, String password) async {
-    // Validasi input
     if (identifier.isEmpty || password.isEmpty) {
       state = AsyncValue.error(
         Exception('Identifier dan password tidak boleh kosong'),
@@ -31,7 +68,6 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
     }
 
     try {
-      // Set loading state
       state = const AsyncValue.loading();
 
       final response = await http
@@ -45,7 +81,6 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
           )
           .timeout(ApiConstants.timeoutDuration);
 
-      // Cetak status code dan body response untuk debugging
       log('Response status: ${response.statusCode}');
       log('Response body: ${response.body}');
 
@@ -55,8 +90,10 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('access_token', loginResponse.accessToken ?? '');
         await prefs.setString('nama', loginResponse.pengguna?.nama ?? '');
-        await prefs.setString('foto', loginResponse.pengguna?.foto ?? '');
-        await prefs.setString('foto', loginResponse.userOnline?.role ?? '');
+        String fullFotoUrl =
+            '${ApiConstants.baseUrl}${ApiConstants.fotoProfilPath}${loginResponse.pengguna?.foto ?? ''}';
+        await prefs.setString('foto', fullFotoUrl);
+        await prefs.setString('role', loginResponse.userOnline?.role ?? '');
         state = AsyncValue.data(loginResponse);
       } else {
         Map<String, dynamic> errorBody = json.decode(response.body);

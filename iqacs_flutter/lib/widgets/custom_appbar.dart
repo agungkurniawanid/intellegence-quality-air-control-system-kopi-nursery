@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
@@ -10,6 +11,7 @@ class CustomAppbar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userName = ref.watch(userNameProvider);
+    final userFoto = ref.watch(userFotoProvider);
     return Row(
       children: [
         Row(
@@ -26,12 +28,36 @@ class CustomAppbar extends ConsumerWidget {
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    child: const ClipOval(
-                      child: Image(
-                        image: AssetImage('assets/images/agung.jpg'),
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
+                    child: ClipOval(
+                      child: userFoto.when(
+                        data: (fotoUrl) {
+                          return fotoUrl != null && fotoUrl.isNotEmpty
+                              ? Image.network(
+                                  fotoUrl,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/icons/bell-black.png', // Gambar default jika foto tidak ada
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                );
+                        },
+                        loading: () => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                        error: (err, stack) => const Icon(Icons.error),
                       ),
                     ),
                   ),

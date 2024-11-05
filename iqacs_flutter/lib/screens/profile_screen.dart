@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iqacs/providers/login_provider.dart';
+import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:iqacs/screens/login_screen.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userFoto = ref.watch(userFotoProvider);
+    final userName = ref.watch(userNameFullProvider);
+    final userRole = ref.watch(userRoleProvider);
+
     final List<Map<String, dynamic>> listItem = [
       {
         "icon": Icons.person_rounded,
@@ -25,6 +34,10 @@ class ProfileScreen extends ConsumerWidget {
         "icon": Icons.help_rounded,
         "text": "Bantuan",
       },
+      {
+        "icon": Icons.logout_rounded,
+        "text": "Logout",
+      }
     ];
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,11 +52,35 @@ class ProfileScreen extends ConsumerWidget {
                   // todo: image picture
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: const Image(
-                      image: AssetImage('assets/images/agung.jpg'),
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
+                    child: userFoto.when(
+                      data: (fotoUrl) {
+                        return fotoUrl != null && fotoUrl.isNotEmpty
+                            ? Image.network(
+                                fotoUrl,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                'assets/icons/bell-black.png', // Gambar default jika foto tidak ada
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              );
+                      },
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      error: (err, stack) => const Icon(Icons.error),
                     ),
                   ),
                   const Gap(20),
@@ -52,21 +89,62 @@ class ProfileScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // todo: name
-                      Text(
-                        'Agung Pratama',
-                        style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
+                      userName.when(
+                        data: (name) {
+                          return Text("$name",
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                              ));
+                        },
+                        loading: () => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 100,
+                            height: 20,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                          ),
                         ),
+                        error: (err, stack) => const Icon(Icons.error),
                       ),
                       // todo: status
-                      Text('owner',
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF4A6783),
-                            fontSize: 20,
-                            fontWeight: FontWeight.normal,
-                          )),
+                      userRole.when(
+                        data: (role) {
+                          String capitalizedRole = role!
+                              .split(' ')
+                              .map((word) => word.isNotEmpty
+                                  ? word[0].toUpperCase() +
+                                      word.substring(1).toLowerCase()
+                                  : '')
+                              .join(' ');
+                          return Text(capitalizedRole,
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF4A6783),
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                              ));
+                        },
+                        loading: () => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            width: 100,
+                            height: 20,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                          ),
+                        ),
+                        error: (err, stack) => const Icon(Icons.error),
+                      ),
                     ],
                   ),
                 ],
@@ -85,7 +163,28 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   ...listItem.map(
                     (item) => GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        if (item['text'] == 'Logout') {
+                          QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.confirm,
+                            title: 'Konfirmasi Logout',
+                            text: 'Apakah Anda yakin ingin logout?',
+                            confirmBtnText: 'Ya',
+                            cancelBtnText: 'Batal',
+                            onConfirmBtnTap: () {
+                              ref.read(loginProvider.notifier).logout();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(
+                                        title: 'Login',
+                                      )));
+                            },
+                            onCancelBtnTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        }
+                      },
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Row(
