@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iqacs/providers/sharedpreferences_provider.dart';
 
 class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userName = ref.watch(userNameProvider);
     return Row(
       children: [
         Row(
@@ -40,12 +42,25 @@ class CustomAppbar extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Pagi, Agung!",
+                userName.when(
+                  data: (userName) => Text(
+                    "Pagi, ${userName ?? 'User'}!",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                    )),
+                    ),
+                  ),
+                  loading: () => const CircularProgressIndicator(),
+                  error: (error, _) => Text(
+                    "Pagi, User!",
+                    style: GoogleFonts.poppins(
+                      color: const Color(0xFF171717),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Text("Senin, 22 September 2024",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
