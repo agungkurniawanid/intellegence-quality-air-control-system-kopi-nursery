@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iqacs/providers/login_provider.dart';
 import 'package:iqacs/screens/page_screen.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   final String title;
@@ -18,6 +19,27 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  void _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    if (token != null && token.isNotEmpty) {
+      await ref.read(loginProvider.notifier).loginWithStoredToken(token);
+      if (mounted && ref.read(loginProvider) is AsyncData) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const PageScreen()),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final phoneController = ref.watch(phoneControllerProvider);

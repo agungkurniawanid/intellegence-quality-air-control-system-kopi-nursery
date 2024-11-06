@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/functions/notification_func.dart';
+import 'package:iqacs/functions/shimmer_card.dart';
 import 'package:iqacs/providers/filter_sensor_provider.dart';
+import 'package:iqacs/providers/get_temp_humidity_provider.dart';
 
 class CustomMainCard extends ConsumerWidget {
   const CustomMainCard({super.key});
@@ -131,88 +133,102 @@ class CustomCardSuhu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 10.0,
-        childAspectRatio: 0.9,
-      ),
-      itemCount: 2,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          padding: const EdgeInsets.all(14.0),
-          decoration: const BoxDecoration(
-            color: Color(0xFFE8E8E8),
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    final selectedIndex = ref.watch(selectedIndexProvider);
+    final selectedSensorData =
+        ref.watch(sensorDataApiProvider(selectedIndex + 1));
+
+    return selectedSensorData.when(
+      data: (data) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 10.0,
+            childAspectRatio: 0.9,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipOval(
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  padding: const EdgeInsets.all(5.0),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF171717),
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      index != 0
-                          ? "assets/images/kelembapan.png"
-                          : "assets/images/suhu.png",
-                      width: 30,
-                      fit: BoxFit.cover,
+          itemCount: 2,
+          itemBuilder: (BuildContext context, int index) {
+            final sensorValue =
+                index != 0 ? data.nilaiHumidity : data.nilaiTemperature;
+            final sensorLabel = index != 0 ? "Kelembapan" : "Suhu";
+            final sensorIdeal = index != 0
+                ? "Ideal: 22.50 % - 27.50 %"
+                : "Ideal: 18° C - 28° C";
+
+            return Container(
+              padding: const EdgeInsets.all(14.0),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE8E8E8),
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipOval(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      padding: const EdgeInsets.all(5.0),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF171717),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          index != 0
+                              ? "assets/images/kelembapan.png"
+                              : "assets/images/suhu.png",
+                          width: 30,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  index != 0 ? "28.32 %" : "18° C",
-                  style: GoogleFonts.poppins(
-                      color: const Color(0xFF171717),
-                      fontSize: 44,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const Gap(8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        index != 0 ? "Kelembapan" : "Suhu",
-                        style: GoogleFonts.poppins(
-                            color: const Color(0xFF171717),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const Icon(Icons.arrow_right_alt,
-                          color: Color(0xFF171717), size: 20),
-                    ],
-                  ),
+                  const SizedBox(height: 10),
                   Text(
-                    index != 0
-                        ? "Ideal: 22.50 % - 27.50 %"
-                        : "Ideal: 18° C - 28° C",
+                    "${sensorValue.toStringAsFixed(2)} ${index != 0 ? '%' : '° C'}",
                     style: GoogleFonts.poppins(
                         color: const Color(0xFF171717),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            sensorLabel,
+                            style: GoogleFonts.poppins(
+                                color: const Color(0xFF171717),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const Icon(Icons.arrow_right_alt,
+                              color: Color(0xFF171717), size: 20),
+                        ],
+                      ),
+                      Text(
+                        sensorIdeal,
+                        style: GoogleFonts.poppins(
+                            color: const Color(0xFF171717),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
+      loading: () => cardInformationSuhuHomeShimmerEffect(),
+      error: (error, stack) => Text('Error: $error'),
     );
   }
 }

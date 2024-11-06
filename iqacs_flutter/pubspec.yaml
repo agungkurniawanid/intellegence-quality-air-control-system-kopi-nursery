@@ -46,6 +46,8 @@ dependencies:
   awesome_snackbar_content: ^0.1.4
   shimmer: ^3.0.0
   quickalert: ^1.1.0
+  dio: ^5.7.0
+  logger: ^2.4.0
 
 dev_dependencies:
   flutter_test:

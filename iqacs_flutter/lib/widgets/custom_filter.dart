@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/providers/filter_sensor_provider.dart';
+import 'package:iqacs/providers/get_temp_humidity_provider.dart';
 
 class CustomFilterSuhuInformation extends ConsumerWidget {
   const CustomFilterSuhuInformation({super.key});
@@ -31,8 +32,9 @@ class CustomFilterSuhuInformation extends ConsumerWidget {
         itemBuilder: (BuildContext context, int index) {
           final isSelected = selectedIndex == index;
           return GestureDetector(
-            onTap: () {
+            onTap: () async {
               ref.read(selectedIndexProvider.notifier).state = index;
+              ref.read(sensorDataApiProvider(index + 1));
             },
             child: Container(
               padding: const EdgeInsets.all(10.0),

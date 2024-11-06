@@ -13,7 +13,22 @@ final loginProvider =
 });
 
 class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
-  LoginNotifier() : super(const AsyncValue.data(null));
+  LoginNotifier() : super(const AsyncValue.data(null)) {
+    _checkToken();
+  }
+
+  Future<void> _checkToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    if (token != null && token.isNotEmpty) {
+      // Cek apakah token masih valid
+      loginWithStoredToken(token);
+    } else {
+      state =
+          const AsyncValue.data(null); // Tidak ada token berarti tidak login
+    }
+  }
 
   Future<void> logout() async {
     try {
@@ -35,6 +50,7 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
 
       if (response.statusCode == 200) {
         await prefs.remove('access_token');
+
         state = const AsyncValue.data(null);
       } else {
         Map<String, dynamic> errorBody = json.decode(response.body);
@@ -114,6 +130,32 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
       state = AsyncValue.error(
           Exception('Terjadi kesalahan: ${e.toString()}'), StackTrace.current);
       log('Terjadi kesalahan: ${e.toString()}');
+    }
+  }
+
+  Future<void> loginWithStoredToken(String token) async {
+    try {
+      state = const AsyncValue.loading();
+
+      final response = await http.post(
+        Uri.parse(ApiConstants.loginTokenEndpoint),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(ApiConstants.timeoutDuration);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final loginResponse = LoginResponse.fromJson(data);
+        state = AsyncValue.data(loginResponse);
+      } else {
+        state = AsyncValue.error(
+            Exception('Token tidak valid'), StackTrace.current);
+      }
+    } catch (e) {
+      state = AsyncValue.error(
+          Exception('Terjadi kesalahan: $e'), StackTrace.current);
     }
   }
 }
