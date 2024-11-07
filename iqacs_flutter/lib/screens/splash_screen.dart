@@ -65,16 +65,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         color: Colors.transparent,
         child: Stack(
           children: [
-            Image.asset(
-              "assets/images/splash/splash.jpg",
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-            ),
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              color: Colors.black.withOpacity(0.5),
+              color: const Color(0xFFBFFA01),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +77,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image(
-                          image: const AssetImage("assets/icons/coffee.png"),
+                          image:
+                              const AssetImage("assets/icons/coffee-black.png"),
                           fit: BoxFit.cover,
                           width: MediaQuery.of(context).size.width / 4,
                         ),
@@ -95,14 +90,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     Text(
                       "IQACS Kopi",
                       style: GoogleFonts.poppins(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 40,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
                       "Nursery.",
                       style: GoogleFonts.poppins(
-                          color: const Color(0xFFFFFFFF),
+                          color: Colors.black,
                           fontSize: 60,
                           height: 0.8,
                           fontWeight: FontWeight.bold),

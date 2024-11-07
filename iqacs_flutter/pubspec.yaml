@@ -89,6 +89,7 @@ flutter:
     - assets/icons/bell-black.png
     - assets/icons/list.png
     - assets/icons/coffee.png
+    - assets/icons/coffee-black.png
     - assets/icons/camera.png
     - assets/icons/upload.png
     - assets/icons/folder.png

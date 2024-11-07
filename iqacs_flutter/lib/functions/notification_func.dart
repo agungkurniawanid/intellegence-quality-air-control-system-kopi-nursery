@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// notifikasi untuk penyemprotan
 void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
   OverlayEntry overlayEntry;
-
   overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
       top: 50,
@@ -48,7 +48,6 @@ void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
                   ),
                   const Gap(10),
                   Expanded(
-                    // Wrap the column with Expanded to ensure proper space management.
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -60,14 +59,10 @@ void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),
-                          overflow: TextOverflow
-                              .ellipsis, // Prevents overflow with ellipsis
-                          softWrap:
-                              true, // Ensures wrapping if the text is too long
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
-                        const SizedBox(
-                            height:
-                                4), // Adds a little space between the two texts
+                        const SizedBox(height: 4),
                         Text(
                           "Penyemprotan ${isSwitchOn ? 'diaktifkan' : 'dimatikan'}, untuk ${isSwitchOn ? 'menonaktifkan' : 'mengaktifkan'} silahkan tekan ulang tombol!",
                           style: GoogleFonts.poppins(
@@ -75,9 +70,8 @@ void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
-                          overflow: TextOverflow
-                              .visible, // Allows overflow to be visible
-                          softWrap: true, // Enables wrapping of the text
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
                         ),
                       ],
                     ),
@@ -95,7 +89,7 @@ void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
 
   Future.delayed(const Duration(milliseconds: 1700), () {
     if (overlayEntry.mounted) {
-      overlayEntry.markNeedsBuild(); // Start fade-out animation
+      overlayEntry.markNeedsBuild();
     }
   });
 

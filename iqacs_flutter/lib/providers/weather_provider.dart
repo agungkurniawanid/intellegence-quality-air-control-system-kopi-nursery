@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:iqacs/constants/api_constant.dart';
-import 'package:iqacs/models/model_monicontrollings.dart';
+import 'package:iqacs/models/model_weather.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,8 +12,8 @@ final dioProvider = Provider((ref) {
   return dio;
 });
 
-final sensorDataApiProvider =
-    StreamProvider.family<Monicontrolling, int>((ref, id) async* {
+final weatherProvider =
+    StreamProvider.family<WeatherModel, String>((ref, city) async* {
   final dio = ref.watch(dioProvider);
 
   final prefs = await SharedPreferences.getInstance();
@@ -23,11 +22,14 @@ final sensorDataApiProvider =
   if (token == null) {
     throw Exception('Token tidak ditemukan');
   }
+  final url = Uri.parse(
+    'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=89c748adb995fb8bc8afbe287c41ed51&units=metric',
+  );
 
   try {
     await for (final _ in Stream.periodic(const Duration(seconds: 5))) {
       final response = await dio.get(
-        '${ApiConstants.getDataTempHumidityEndpoint}$id',
+        url.toString(),
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -40,7 +42,7 @@ final sensorDataApiProvider =
 
       if (response.statusCode == 200) {
         if (response.data is Map<String, dynamic>) {
-          yield Monicontrolling.fromJson(response.data);
+          yield WeatherModel.fromJson(response.data);
         } else {
           throw const FormatException('Unexpected response format');
         }
@@ -49,7 +51,7 @@ final sensorDataApiProvider =
           requestOptions: response.requestOptions,
           response: response,
           type: DioExceptionType.badResponse,
-          error: 'Failed to load sensor data: ${response.statusCode}',
+          error: 'Failed to load weather data: ${response.statusCode}',
         );
       }
     }

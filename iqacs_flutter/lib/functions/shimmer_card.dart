@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+// widget untuk shimmer effect laoding data card suhu dan temp halaman home
 Widget cardInformationSuhuHomeShimmerEffect() {
   return GridView.builder(
     shrinkWrap: true,
