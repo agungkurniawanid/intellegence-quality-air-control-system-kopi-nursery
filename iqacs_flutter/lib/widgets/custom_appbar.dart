@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:intl/intl.dart';
 
 class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
@@ -12,6 +13,10 @@ class CustomAppbar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userName = ref.watch(userNameProvider);
     final userFoto = ref.watch(userFotoProvider);
+
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('EEEE, d MMMM y').format(now);
+
     return Row(
       children: [
         Row(
@@ -39,7 +44,7 @@ class CustomAppbar extends ConsumerWidget {
                                   fit: BoxFit.cover,
                                 )
                               : Image.asset(
-                                  'assets/icons/bell-black.png', // Gambar default jika foto tidak ada
+                                  'assets/images/agung.jpg',
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
@@ -87,7 +92,7 @@ class CustomAppbar extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Text("Senin, 22 September 2024",
+                Text(formattedDate,
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
                       fontSize: 14,

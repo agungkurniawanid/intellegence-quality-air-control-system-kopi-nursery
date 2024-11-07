@@ -7,6 +7,7 @@ import 'package:iqacs/functions/shimmer_card.dart';
 import 'package:iqacs/providers/filter_sensor_provider.dart';
 import 'package:iqacs/providers/get_temp_humidity_provider.dart';
 import 'package:iqacs/providers/weather_provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomMainCard extends ConsumerWidget {
   const CustomMainCard({super.key});
@@ -48,18 +49,17 @@ class CustomMainCard extends ConsumerWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "IDEAL TEMP",
+                          double.parse(weather.temperature.toStringAsFixed(2)) <
+                                      23.00 ||
+                                  double.parse(weather.temperature
+                                          .toStringAsFixed(2)) >
+                                      26.00
+                              ? 'TIDAK IDEAL'
+                              : 'IDEAL TEMP',
                           style: GoogleFonts.poppins(
                               color: const Color(0xFF171717),
                               fontSize: 28,
                               fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "Senin, 22 September 2024",
-                          style: GoogleFonts.poppins(
-                              color: const Color(0xFF171717),
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal),
                         ),
                       ],
                     ),
@@ -94,7 +94,13 @@ class CustomMainCard extends ConsumerWidget {
                         ),
                         const Gap(5),
                         Text(
-                          "22,21 % / Ideal",
+                          double.parse(weather.humidity.toStringAsFixed(2)) <=
+                                      60.99 ||
+                                  double.parse(weather.humidity
+                                          .toStringAsFixed(2)) >=
+                                      90.99
+                              ? '${weather.humidity.toStringAsFixed(2)} % / IDEAL'
+                              : '${weather.humidity.toStringAsFixed(2)} % / TIDAK IDEAL',
                           style: GoogleFonts.poppins(
                               color: const Color(0xFF171717),
                               fontSize: 18,
@@ -117,7 +123,7 @@ class CustomMainCard extends ConsumerWidget {
                           Row(
                             children: [
                               Text(
-                                "18° C",
+                                "23° C",
                                 style: GoogleFonts.poppins(
                                     color: const Color(0xFF171717),
                                     fontSize: 18,
@@ -131,7 +137,7 @@ class CustomMainCard extends ConsumerWidget {
                               ),
                               const Gap(5),
                               Text(
-                                "28° C",
+                                "26° C",
                                 style: GoogleFonts.poppins(
                                     color: const Color(0xFF171717),
                                     fontSize: 18,
@@ -152,9 +158,98 @@ class CustomMainCard extends ConsumerWidget {
         );
       },
       loading: () {
-        // Tangani kasus loading
-        return const Center(
-          child: CircularProgressIndicator(),
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+              borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 40,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          width: 80,
+                          height: 20,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          width: 150,
+                          height: 15,
+                          color: Colors.grey[300],
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 3.5,
+                      height: 80,
+                      color: Colors.grey[300],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 20,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 5),
+                        Container(
+                          width: 70,
+                          height: 15,
+                          color: Colors.grey[300],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 20,
+                          color: Colors.grey[300],
+                        ),
+                        const SizedBox(height: 5),
+                        Container(
+                          width: 90,
+                          height: 15,
+                          color: Colors.grey[300],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

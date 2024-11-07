@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:iqacs/models/model_weather.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final logger = Logger();
 
@@ -16,12 +15,6 @@ final weatherProvider =
     StreamProvider.family<WeatherModel, String>((ref, city) async* {
   final dio = ref.watch(dioProvider);
 
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('access_token');
-
-  if (token == null) {
-    throw Exception('Token tidak ditemukan');
-  }
   final url = Uri.parse(
     'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=89c748adb995fb8bc8afbe287c41ed51&units=metric',
   );
@@ -33,7 +26,6 @@ final weatherProvider =
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
           },
         ),
       );
