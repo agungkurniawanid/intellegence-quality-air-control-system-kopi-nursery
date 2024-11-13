@@ -36,3 +36,39 @@ final userFotoProvider = FutureProvider<String?>((ref) async {
   }
   return null;
 });
+
+final userEmailProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final email = prefs.getString('email');
+  if (email != null && email.isNotEmpty) {
+    return email;
+  }
+  return '';
+});
+
+final userTelephoneProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final telepon = prefs.getString('no_telfon');
+  if (telepon != null && telepon.isNotEmpty) {
+    return telepon;
+  }
+  return '';
+});
+
+final userAddressProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final alamat = prefs.getString('alamat');
+  if (alamat != null && alamat.isNotEmpty) {
+    return alamat;
+  }
+  return '';
+});
+
+final userDescriptionProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final deskripsi = prefs.getString('deskripsi');
+  if (deskripsi != null && deskripsi.isNotEmpty) {
+    return deskripsi;
+  }
+  return '';
+});

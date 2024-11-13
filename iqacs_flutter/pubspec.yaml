@@ -49,6 +49,9 @@ dependencies:
   dio: ^5.7.0
   logger: ^2.4.0
   intl: ^0.19.0
+  camera: ^0.11.0+2
+  image_picker: ^1.1.2
+  flutter_otp_text_field: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +98,9 @@ flutter:
     - assets/icons/upload.png
     - assets/icons/folder.png
     - assets/icons/weather-black.png
+    - assets/icons/checkotp.png
+    - assets/icons/forgotpasword.png
+    - assets/icons/newpassword.png
     - assets/images/sprayer.png
     - assets/images/rain.png
     - assets/images/coffee-leaf/64.jpg

@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/providers/login_provider.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:iqacs/screens/edit_profile_screen.dart';
 import 'package:iqacs/screens/login_screen.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shimmer/shimmer.dart';
@@ -46,10 +47,8 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              // todo: profile picture, name and status(owner, karyawan)
               Row(
                 children: [
-                  // todo: image picture
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: userFoto.when(
@@ -62,7 +61,7 @@ class ProfileScreen extends ConsumerWidget {
                                 fit: BoxFit.cover,
                               )
                             : Image.asset(
-                                'assets/icons/bell-black.png', // Gambar default jika foto tidak ada
+                                'assets/images/agung.jpg',
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,
@@ -84,7 +83,6 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   const Gap(20),
-                  // todo: name and status
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -150,7 +148,6 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
               const Gap(20),
-              // todo: divider garis pembatas
               const Divider(
                 color: Color(0xFFE8E8E8),
                 thickness: 2,
@@ -158,7 +155,6 @@ class ProfileScreen extends ConsumerWidget {
                 endIndent: 0,
               ),
               const Gap(20),
-              // todo list item
               Column(
                 children: [
                   ...listItem.map(
@@ -183,6 +179,10 @@ class ProfileScreen extends ConsumerWidget {
                               Navigator.of(context).pop();
                             },
                           );
+                        }
+                        if (item['text'] == 'Personal Data') {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const EditProfileScreen()));
                         }
                       },
                       child: Padding(

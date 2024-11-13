@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/providers/input_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:iqacs/providers/login_provider.dart';
+import 'package:iqacs/screens/forgot_password_screen.dart';
 import 'package:iqacs/screens/page_screen.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -154,14 +155,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ).animate().fadeIn(duration: 1200.ms).slideX(),
                         const Gap(10),
-                        Text("Lupa Password?",
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF42A510),
-                                    decoration: TextDecoration.underline))
-                            .animate()
-                            .fadeIn(duration: 1200.ms),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPasswordScreen(),
+                                ));
+                          },
+                          child: Text("Lupa Password?",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF42A510),
+                                      decoration: TextDecoration.underline))
+                              .animate()
+                              .fadeIn(duration: 1200.ms),
+                        ),
                         const Gap(20),
                         ElevatedButton(
                           onPressed: () async {

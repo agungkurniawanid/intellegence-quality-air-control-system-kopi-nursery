@@ -22,11 +22,10 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
     final token = prefs.getString('access_token');
 
     if (token != null && token.isNotEmpty) {
-      // Cek apakah token masih valid
       loginWithStoredToken(token);
     } else {
       state =
-          const AsyncValue.data(null); // Tidak ada token berarti tidak login
+          const AsyncValue.data(null);
     }
   }
 
@@ -106,10 +105,20 @@ class LoginNotifier extends StateNotifier<AsyncValue<LoginResponse?>> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('access_token', loginResponse.accessToken ?? '');
         await prefs.setString('nama', loginResponse.pengguna?.nama ?? '');
+        await prefs.setString('alamat', loginResponse.pengguna?.alamat ?? '');
+        await prefs.setString(
+            'deskripsi', loginResponse.pengguna?.deskripsi ?? '');
+        await prefs.setString(
+            'id_pengguna', loginResponse.pengguna?.id.toString() ?? '');
         String fullFotoUrl =
             '${ApiConstants.baseUrl}${ApiConstants.fotoProfilPath}${loginResponse.pengguna?.foto ?? ''}';
         await prefs.setString('foto', fullFotoUrl);
         await prefs.setString('role', loginResponse.userOnline?.role ?? '');
+        await prefs.setString('email', loginResponse.userOnline?.email ?? '');
+        await prefs.setString(
+            'no_telfon', loginResponse.userOnline?.noTelepon ?? '');
+        await prefs.setString(
+            'id_users', loginResponse.userOnline?.id.toString() ?? '');
         state = AsyncValue.data(loginResponse);
       } else {
         Map<String, dynamic> errorBody = json.decode(response.body);

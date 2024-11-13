@@ -7,6 +7,7 @@ import 'package:iqacs/functions/shimmer_card.dart';
 import 'package:iqacs/providers/filter_sensor_provider.dart';
 import 'package:iqacs/providers/get_temp_humidity_provider.dart';
 import 'package:iqacs/providers/weather_provider.dart';
+import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CustomMainCard extends ConsumerWidget {
@@ -367,6 +368,8 @@ class CustomCardSprayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSwitchOn = ref.watch(switchStateProvider);
+    final pumpApiService = ref.watch(pumpApiProvider);
+    final logger = Logger();
     return Container(
       padding: const EdgeInsets.all(14.0),
       width: MediaQuery.of(context).size.width,
@@ -398,13 +401,20 @@ class CustomCardSprayer extends ConsumerWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   final newState = !isSwitchOn;
                   ref.read(switchStateProvider.notifier).state = newState;
-                  if (newState) {
-                    showNotificationSpraying(context, true);
-                  } else {
-                    showNotificationSpraying(context, false);
+                  try {
+                    await pumpApiService.togglePump();
+                    if (context.mounted) {
+                      if (newState) {
+                        showNotificationSpraying(context, true);
+                      } else {
+                        showNotificationSpraying(context, false);
+                      }
+                    }
+                  } catch (e) {
+                    logger.d("Error: $e");
                   }
                 },
                 child: Container(

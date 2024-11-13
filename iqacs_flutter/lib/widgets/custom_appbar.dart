@@ -62,7 +62,12 @@ class CustomAppbar extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        error: (err, stack) => const Icon(Icons.error),
+                        error: (err, stack) => Image.asset(
+                          'assets/images/agung.jpg',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
