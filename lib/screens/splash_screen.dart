@@ -21,7 +21,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarDividerColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark));
 
     Timer(const Duration(seconds: 2), () {

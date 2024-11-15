@@ -14,6 +14,8 @@ class ApiConstants {
       '$baseUrl/api/lupa-password/verifikasi-otp/';
   static const String kirimUlangOtpEndpoint =
       '$baseUrl/api/lupa-password/kirim-ulang-otp/';
+  static const String resetPasswordEndpoint =
+      '$baseUrl/api/lupa-password/reset-password/';
 
   // api external key
   static const String openWeatherApiKey = '89c748adb995fb8bc8afbe287c41ed51';
