@@ -153,10 +153,21 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                               ),
                               PopupMenuButton<String>(
                                 icon: const Icon(Icons.more_vert),
-                                onSelected: (value) {
+                                onSelected: (value) async {
                                   if (value == 'filter') {
                                     _pickDateRange();
-                                  } else if (value == 'export') {}
+                                  } else if (value == 'export') {
+                                    chartDataAsync.when(
+                                      data: (ChartResponse chartData) {
+                                        exportToExcel(chartData, context);
+                                      },
+                                      loading: () {},
+                                      error: (error, stackTrace) {
+                                        showErrorSnackbar(context,
+                                            'Gagal mengambil data untuk ekspor.');
+                                      },
+                                    );
+                                  }
                                 },
                                 itemBuilder: (BuildContext context) {
                                   return [

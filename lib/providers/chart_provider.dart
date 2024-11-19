@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/constants/dio_constant.dart';
+import 'package:iqacs/functions/snackbar_func.dart';
 import 'package:iqacs/models/model_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
+import 'package:excel/excel.dart' as esel;
 
 final logger = Logger();
 
@@ -78,4 +82,63 @@ class DateRangeNotifier extends StateNotifier<DateTimeRange> {
       throw Exception('Rentang tanggal tidak boleh lebih dari 7 hari');
     }
   }
+}
+
+Future<void> exportToExcel(ChartResponse chartData, context) async {
+  // Membuat workbook baru
+  var excel = esel.Excel.createExcel();
+  esel.Sheet sheet = excel['Sheet1'];
+
+  // Menambahkan header dengan gaya (opsional)
+  esel.CellStyle cellStyle = esel.CellStyle(
+    fontFamily: esel.getFontFamily(esel.FontFamily.Calibri),
+    fontSize: 12,
+    bold: true,
+  );
+
+  // Menambahkan header
+  sheet.cell(esel.CellIndex.indexByString('A1')).value =
+      esel.TextCellValue('Tanggal');
+  sheet.cell(esel.CellIndex.indexByString('B1')).value =
+      esel.TextCellValue('Rata-rata Suhu');
+  sheet.cell(esel.CellIndex.indexByString('C1')).value =
+      esel.TextCellValue('Rata-rata Kelembapan');
+
+  // Mengatur gaya untuk header
+  sheet.cell(esel.CellIndex.indexByString('A1')).cellStyle = cellStyle;
+  sheet.cell(esel.CellIndex.indexByString('B1')).cellStyle = cellStyle;
+  sheet.cell(esel.CellIndex.indexByString('C1')).cellStyle = cellStyle;
+
+  // Menambahkan data dari chartData
+  for (int i = 0; i < chartData.data.length; i++) {
+    var data = chartData.data[i];
+    int rowIndex = i + 2; // Mulai dari baris 2 untuk data
+    sheet.cell(esel.CellIndex.indexByString('A$rowIndex')).value =
+        esel.DateTimeCellValue(
+      year: int.parse(data.tanggal.split('-')[0]),
+      month: int.parse(data.tanggal.split('-')[1]),
+      day: int.parse(data.tanggal.split('-')[2]),
+      hour: 0,
+      minute: 0,
+    );
+    sheet.cell(esel.CellIndex.indexByString('B$rowIndex')).value =
+        esel.DoubleCellValue(data.avgTemperature);
+    sheet.cell(esel.CellIndex.indexByString('C$rowIndex')).value =
+        esel.DoubleCellValue(data.avgHumidity);
+  }
+
+  // Mendapatkan direktori Downloads
+  String downloadsPath = 'storage/emulated/0/Download';
+  Directory(downloadsPath).createSync(recursive: true);
+
+  // Membuat nama file yang unik dengan menambahkan timestamp
+  String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+  String filePath = '$downloadsPath/chart_data_$timestamp.xlsx';
+
+  // Menyimpan file Excel
+  File(filePath)
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(excel.encode()!);
+
+  showSuccessSnackbar(context, 'Berhasil disimpan di $filePath');
 }
