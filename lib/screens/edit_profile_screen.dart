@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:iqacs/constants/api_constant.dart';
+import 'package:iqacs/functions/snackbar_func.dart';
+import 'package:iqacs/providers/chart_provider.dart';
+import 'package:iqacs/providers/profile_provider.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:iqacs/providers/user_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:logger/logger.dart';
+import 'dart:io';
 
-final logger = Logger();
-
-class EditProfileScreen extends ConsumerWidget {
+class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
 
+  @override
+  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Future<void> _handleImageSelection(BuildContext context) async {
     showModalBottomSheet(
       context: context,
@@ -26,13 +35,7 @@ class EditProfileScreen extends ConsumerWidget {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  // Pilih foto menggunakan kamera
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.camera);
-                  if (image != null) {
-                    logger.d('Path gambar yang diambil: ${image.path}');
-                  }
+                  await _pickAndUploadImage(ImageSource.camera);
                 },
               ),
               ListTile(
@@ -43,13 +46,7 @@ class EditProfileScreen extends ConsumerWidget {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  // Pilih foto dari galeri
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.gallery);
-                  if (image != null) {
-                    logger.d('Path gambar yang dipilih: ${image.path}');
-                  }
+                  await _pickAndUploadImage(ImageSource.gallery);
                 },
               ),
             ],
@@ -59,14 +56,88 @@ class EditProfileScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _pickAndUploadImage(ImageSource source) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible:
+            false, // Menonaktifkan dismiss jika dialog diklik di luar
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Row(
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(width: 10),
+                Text("Memproses..."),
+              ],
+            ),
+          );
+        },
+      );
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 70,
+      );
+
+      if (pickedFile != null) {
+        final file = File(pickedFile.path);
+        final fileSize = await file.length();
+        final fileName = pickedFile.name.replaceAll('scaled_', '');
+        if (!['jpeg', 'jpg', 'png']
+            .contains(file.path.split('.').last.toLowerCase())) {
+          if (mounted) {
+            showErrorSnackbar(context,
+                'File harus berupa gambar dengan format jpg, jpeg, atau png');
+          }
+          Navigator.pop(context);
+          return;
+        }
+        if (fileSize > 2 * 1024 * 1024) {
+          if (mounted) {
+            showErrorSnackbar(
+                context, 'Ukuran file tidak boleh lebih dari 2 MB');
+          }
+          Navigator.pop(context);
+          return;
+        }
+
+        final updateProfileResult = await ref.read(
+          updateProfileProvider(pickedFile).future,
+        );
+
+        Navigator.pop(context);
+        if (updateProfileResult.status == 'success') {
+          if (mounted) {
+            ref.invalidate(getDataPenggunaProvider);
+            showSuccessSnackbar(context, updateProfileResult.message);
+            logger.d(updateProfileResult.message);
+            logger.d(fileName);
+          }
+        } else {
+          if (mounted) {
+            showErrorSnackbar(context, updateProfileResult.message);
+            logger.d(updateProfileResult.message);
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorSnackbar(context, e.toString());
+        logger.d(e.toString());
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final userFoto = ref.watch(userFotoProvider);
     final userName = ref.watch(userNameProvider);
     final email = ref.watch(userEmailProvider);
     final telfon = ref.watch(userTelephoneProvider);
     final alamat = ref.watch(userAddressProvider);
     final deskripsi = ref.watch(userDescriptionProvider);
+    final penggunaResponse = ref.watch(getDataPenggunaProvider);
 
     final inputLabels = [
       'Nama Lengkap',
@@ -154,11 +225,11 @@ class EditProfileScreen extends ConsumerWidget {
                           padding: const EdgeInsets.all(5.0),
                           decoration: const BoxDecoration(color: Colors.white),
                           child: ClipOval(
-                            child: userFoto.when(
+                            child: penggunaResponse.when(
                               data: (fotoUrl) {
-                                return fotoUrl != null && fotoUrl.isNotEmpty
+                                return fotoUrl.pengguna?.foto != null
                                     ? Image.network(
-                                        fotoUrl,
+                                        '${ApiConstants.baseUrl}${ApiConstants.fotoProfilPath}${fotoUrl.pengguna?.foto}',
                                         width: 150,
                                         height: 150,
                                         fit: BoxFit.cover,

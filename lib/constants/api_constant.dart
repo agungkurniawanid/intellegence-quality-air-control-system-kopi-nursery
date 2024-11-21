@@ -1,6 +1,6 @@
 class ApiConstants {
   // https://nursery-mbkm.research-ai.my.id
-  static const String baseUrl = 'http://192.168.1.14:8000';
+  static const String baseUrl = 'http://192.168.1.17:8000';
 
   // endpoint
   static const String loginEndpoint = '$baseUrl/api/login';
@@ -17,6 +17,8 @@ class ApiConstants {
   static const String resetPasswordEndpoint =
       '$baseUrl/api/lupa-password/reset-password/';
   static const String chartEndpoint = '$baseUrl/api/chartdaritanggal/';
+  static const String updateFotoEndpoint = '$baseUrl/api/updatefoto/';
+  static const String getDataPenggunaEndpoint = '$baseUrl/api/get-pengguna/';
 
   // api external key
   static const String openWeatherApiKey = '89c748adb995fb8bc8afbe287c41ed51';

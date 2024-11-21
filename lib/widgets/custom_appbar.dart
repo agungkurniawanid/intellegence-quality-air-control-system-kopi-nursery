@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:iqacs/providers/user_provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
 
@@ -13,6 +15,7 @@ class CustomAppbar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userName = ref.watch(userNameProvider);
     final userFoto = ref.watch(userFotoProvider);
+    final res = ref.watch(getDataPenggunaProvider);
 
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('EEEE, d MMMM y').format(now);
@@ -34,11 +37,11 @@ class CustomAppbar extends ConsumerWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
                     child: ClipOval(
-                      child: userFoto.when(
+                      child: res.when(
                         data: (fotoUrl) {
-                          return fotoUrl != null && fotoUrl.isNotEmpty
+                          return fotoUrl.pengguna?.foto != null
                               ? Image.network(
-                                  fotoUrl,
+                                  '${ApiConstants.baseUrl}${ApiConstants.fotoProfilPath}${fotoUrl.pengguna?.foto}',
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
@@ -78,9 +81,9 @@ class CustomAppbar extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                userName.when(
-                  data: (userName) => Text(
-                    "Pagi, ${userName ?? 'User'}!",
+                res.when(
+                  data: (data) => Text(
+                    "Pagi, ${data.pengguna?.nama}",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
                       fontSize: 24,

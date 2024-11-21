@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/providers/login_provider.dart';
 import 'package:iqacs/providers/sharedpreferences_provider.dart';
+import 'package:iqacs/providers/user_provider.dart';
 import 'package:iqacs/screens/edit_profile_screen.dart';
 import 'package:iqacs/screens/login_screen.dart';
 import 'package:quickalert/quickalert.dart';
@@ -17,6 +19,7 @@ class ProfileScreen extends ConsumerWidget {
     final userFoto = ref.watch(userFotoProvider);
     final userName = ref.watch(userNameFullProvider);
     final userRole = ref.watch(userRoleProvider);
+    final penggunaResponse = ref.watch(getDataPenggunaProvider);
 
     final List<Map<String, dynamic>> listItem = [
       {
@@ -51,11 +54,11 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: userFoto.when(
+                    child: penggunaResponse.when(
                       data: (fotoUrl) {
-                        return fotoUrl != null && fotoUrl.isNotEmpty
+                        return fotoUrl.pengguna?.foto != null
                             ? Image.network(
-                                fotoUrl,
+                                '${ApiConstants.baseUrl}${ApiConstants.fotoProfilPath}${fotoUrl.pengguna?.foto}',
                                 width: 80,
                                 height: 80,
                                 fit: BoxFit.cover,
