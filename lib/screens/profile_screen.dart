@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/providers/login_provider.dart';
-import 'package:iqacs/providers/sharedpreferences_provider.dart';
 import 'package:iqacs/providers/user_provider.dart';
 import 'package:iqacs/screens/edit_profile_screen.dart';
 import 'package:iqacs/screens/login_screen.dart';
@@ -16,9 +15,6 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userFoto = ref.watch(userFotoProvider);
-    final userName = ref.watch(userNameFullProvider);
-    final userRole = ref.watch(userRoleProvider);
     final penggunaResponse = ref.watch(getDataPenggunaProvider);
 
     final List<Map<String, dynamic>> listItem = [
@@ -90,9 +86,9 @@ class ProfileScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // todo: name
-                      userName.when(
+                      penggunaResponse.when(
                         data: (name) {
-                          return Text("$name",
+                          return Text("${name.pengguna?.nama}",
                               style: GoogleFonts.poppins(
                                 color: Colors.black,
                                 fontSize: 24,
@@ -115,15 +111,16 @@ class ProfileScreen extends ConsumerWidget {
                         error: (err, stack) => const Icon(Icons.error),
                       ),
                       // todo: status
-                      userRole.when(
+                      penggunaResponse.when(
                         data: (role) {
-                          String capitalizedRole = role!
-                              .split(' ')
-                              .map((word) => word.isNotEmpty
-                                  ? word[0].toUpperCase() +
-                                      word.substring(1).toLowerCase()
-                                  : '')
-                              .join(' ');
+                          String capitalizedRole = role.user?.role
+                                  .split(' ')
+                                  .map((word) => word.isNotEmpty
+                                      ? word[0].toUpperCase() +
+                                          word.substring(1).toLowerCase()
+                                      : '')
+                                  .join(' ') ??
+                              '';
                           return Text(capitalizedRole,
                               style: GoogleFonts.poppins(
                                 color: const Color(0xFF4A6783),

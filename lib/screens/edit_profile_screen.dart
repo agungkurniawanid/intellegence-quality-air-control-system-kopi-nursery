@@ -4,11 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/functions/snackbar_func.dart';
-import 'package:iqacs/providers/chart_provider.dart';
+import 'package:iqacs/providers/forgot_password_provider.dart';
 import 'package:iqacs/providers/profile_provider.dart';
-import 'package:iqacs/providers/sharedpreferences_provider.dart';
 import 'package:iqacs/providers/user_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
 
@@ -58,22 +56,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _pickAndUploadImage(ImageSource source) async {
     try {
-      showDialog(
-        context: context,
-        barrierDismissible:
-            false, // Menonaktifkan dismiss jika dialog diklik di luar
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Row(
-              children: const [
-                CircularProgressIndicator(),
-                SizedBox(width: 10),
-                Text("Memproses..."),
-              ],
-            ),
-          );
-        },
-      );
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(
         source: source,
@@ -90,7 +72,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             showErrorSnackbar(context,
                 'File harus berupa gambar dengan format jpg, jpeg, atau png');
           }
-          Navigator.pop(context);
           return;
         }
         if (fileSize > 2 * 1024 * 1024) {
@@ -98,7 +79,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             showErrorSnackbar(
                 context, 'Ukuran file tidak boleh lebih dari 2 MB');
           }
-          Navigator.pop(context);
           return;
         }
 
@@ -106,7 +86,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           updateProfileProvider(pickedFile).future,
         );
 
-        Navigator.pop(context);
         if (updateProfileResult.status == 'success') {
           if (mounted) {
             ref.invalidate(getDataPenggunaProvider);
@@ -129,55 +108,64 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
   }
 
+  final List<TextEditingController> controllers = [];
+  final inputLabels = [
+    'Nama Lengkap',
+    'Email',
+    'No. Telepon',
+    'Alamat',
+    'Bio',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    final penggunaResponse = ref.read(getDataPenggunaProvider);
+    controllers.addAll([
+      TextEditingController(
+          text: penggunaResponse.when(
+        data: (data) => data.pengguna?.nama ?? '',
+        loading: () => '',
+        error: (err, stack) => '',
+      )),
+      TextEditingController(
+          text: penggunaResponse.when(
+        data: (data) => data.user?.email,
+        loading: () => '',
+        error: (err, stack) => '',
+      )),
+      TextEditingController(
+          text: penggunaResponse.when(
+        data: (data) => data.user?.noTelepon,
+        loading: () => '',
+        error: (err, stack) => '',
+      )),
+      TextEditingController(
+          text: penggunaResponse.when(
+        data: (data) => data.pengguna?.alamat,
+        loading: () => '',
+        error: (err, stack) => '',
+      )),
+      TextEditingController(
+          text: penggunaResponse.when(
+        data: (data) => data.pengguna?.deskripsi,
+        loading: () => '',
+        error: (err, stack) => '',
+      )),
+    ]);
+  }
+
+  @override
+  void dispose() {
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userFoto = ref.watch(userFotoProvider);
-    final userName = ref.watch(userNameProvider);
-    final email = ref.watch(userEmailProvider);
-    final telfon = ref.watch(userTelephoneProvider);
-    final alamat = ref.watch(userAddressProvider);
-    final deskripsi = ref.watch(userDescriptionProvider);
     final penggunaResponse = ref.watch(getDataPenggunaProvider);
-
-    final inputLabels = [
-      'Nama Lengkap',
-      'Email',
-      'No. Telepon',
-      'Alamat',
-      'Bio',
-    ];
-    final controllers = [
-      TextEditingController(
-          text: userName.when(
-        data: (data) => data ?? '',
-        loading: () => '',
-        error: (err, stack) => '',
-      )),
-      TextEditingController(
-          text: email.when(
-        data: (data) => data,
-        loading: () => '',
-        error: (err, stack) => '',
-      )),
-      TextEditingController(
-          text: telfon.when(
-        data: (data) => data,
-        loading: () => '',
-        error: (err, stack) => '',
-      )),
-      TextEditingController(
-          text: alamat.when(
-        data: (data) => data,
-        loading: () => '',
-        error: (err, stack) => '',
-      )),
-      TextEditingController(
-          text: deskripsi.when(
-        data: (data) => data,
-        loading: () => '',
-        error: (err, stack) => '',
-      )),
-    ];
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       appBar: AppBar(
@@ -321,27 +309,79 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.black,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                    fixedSize: const Size.fromHeight(50),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    onPressed: () async {
+                      ref.read(loadingProvider.notifier).state = true;
+                      try {
+                        final params = ParamsUpdateDatPengguna(
+                          email: controllers[1].text,
+                          notTelfon: controllers[2].text,
+                          namaLengkap: controllers[0].text,
+                          alamat: controllers[3].text,
+                          deskripsi: controllers[4].text,
+                        );
+                        logger
+                            .d('Memulai reset password dengan params: $params');
+                        final responseServer = await ref.read(
+                            updateDataPenggunaWithoutPhoto(params).future);
+                        logger.d(
+                            'Respons dari server: ${responseServer.message}, Status: ${responseServer.status}');
+                        if (context.mounted) {
+                          if (responseServer.message != null) {
+                            ref.invalidate(getDataPenggunaProvider);
+                            showSuccessSnackbar(
+                                context, responseServer.message!);
+                          } else {
+                            showErrorSnackbar(context, 'Unknown error');
+                          }
+                        }
+                      } catch (e, stackTrace) {
+                        logger.d('Terjadi kesalahan selama reset password: $e');
+                        logger.d('Stack trace: $stackTrace');
+                        if (context.mounted) {
+                          showErrorSnackbar(
+                              context, 'Terjadi kesalahan: ${e.toString()}');
+                        }
+                      } finally {
+                        ref.read(loadingProvider.notifier).state = false;
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 0),
+                      fixedSize: const Size.fromHeight(50),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                  ),
-                  label: Text(
-                    "Simpan Perubahan",
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    label: Consumer(builder: (context, ref, child) {
+                      final isLoading = ref.watch(loadingProvider);
+                      return isLoading
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Menyimpan...",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            )
+                          : Text(
+                              "Update Data",
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                    })),
               ),
             ]),
           ),

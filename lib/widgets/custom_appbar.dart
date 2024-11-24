@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/constants/api_constant.dart';
-import 'package:iqacs/providers/sharedpreferences_provider.dart';
 import 'package:iqacs/providers/user_provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
@@ -13,8 +12,6 @@ class CustomAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userName = ref.watch(userNameProvider);
-    final userFoto = ref.watch(userFotoProvider);
     final res = ref.watch(getDataPenggunaProvider);
 
     DateTime now = DateTime.now();
@@ -83,7 +80,7 @@ class CustomAppbar extends ConsumerWidget {
               children: [
                 res.when(
                   data: (data) => Text(
-                    "Pagi, ${data.pengguna?.nama}",
+                    "Pagi, ${data.pengguna?.nama.split(' ').first}",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFF171717),
                       fontSize: 24,
