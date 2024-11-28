@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             fontSize: 16,
                           ),
                           decoration: InputDecoration(
-                            hintText: ".......",
+                            hintText: "Masukkn Password Anda!",
                             hintStyle: GoogleFonts.poppins(
                               color: Colors.grey,
                               fontSize: 16,

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iqacs/constants/api_constant.dart';
 import 'package:iqacs/providers/login_provider.dart';
 import 'package:iqacs/providers/user_provider.dart';
+import 'package:iqacs/screens/change_password.dart';
 import 'package:iqacs/screens/edit_profile_screen.dart';
 import 'package:iqacs/screens/login_screen.dart';
 import 'package:quickalert/quickalert.dart';
@@ -23,16 +24,8 @@ class ProfileScreen extends ConsumerWidget {
         "text": "Personal Data",
       },
       {
-        "icon": Icons.key_rounded,
-        "text": "Hak Akses",
-      },
-      {
         "icon": Icons.lock_rounded,
         "text": "Ubah Password",
-      },
-      {
-        "icon": Icons.help_rounded,
-        "text": "Bantuan",
       },
       {
         "icon": Icons.logout_rounded,
@@ -183,6 +176,10 @@ class ProfileScreen extends ConsumerWidget {
                         if (item['text'] == 'Personal Data') {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const EditProfileScreen()));
+                        }
+                        if (item['text'] == 'Ubah Password') {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const ChangePassword()));
                         }
                       },
                       child: Padding(

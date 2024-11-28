@@ -112,6 +112,7 @@ flutter:
     - assets/icons/checkotp.png
     - assets/icons/forgotpasword.png
     - assets/icons/newpassword.png
+    - assets/icons/changepass.png
     - assets/images/sprayer.png
     - assets/images/rain.png
     - assets/images/coffee-leaf/64.jpg
