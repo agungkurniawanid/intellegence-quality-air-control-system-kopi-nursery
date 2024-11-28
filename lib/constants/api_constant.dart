@@ -1,6 +1,6 @@
 class ApiConstants {
-  // https://nursery-mbkm.research-ai.my.id
-  static const String baseUrl = 'http://192.168.0.2:8000';
+  // static const String baseUrl = 'http://192.168.139.35:8000';
+  static const String baseUrl = 'https://nursery-mbkm.research-ai.my.id';
 
   // endpoint
   static const String loginEndpoint = '$baseUrl/api/login';
