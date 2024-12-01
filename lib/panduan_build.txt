@@ -1,0 +1,14 @@
+# Bersihkan project
+flutter clean
+
+# Hapus folder build
+rm -rf build/
+
+# Update dependencies
+flutter pub get
+
+# Build APK
+flutter build apk --release
+
+# Atau dengan split ABI
+flutter build apk --split-per-abi --release
