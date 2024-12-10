@@ -23,10 +23,10 @@ class CustomFilterSuhuInformation extends ConsumerWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+          crossAxisCount: 2,
           crossAxisSpacing: 5.0,
           mainAxisSpacing: 10.0,
-          childAspectRatio: 2,
+          childAspectRatio: 4,
         ),
         itemCount: sensorData.length,
         itemBuilder: (BuildContext context, int index) {

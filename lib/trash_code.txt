@@ -1,0 +1,187 @@
+// Padding(
+            //     padding: const EdgeInsets.only(
+            //         top: 10.0, left: 20.0, right: 20.0, bottom: 10.0),
+            //     child: Container(
+            //       width: MediaQuery.of(context).size.width,
+            //       decoration: const BoxDecoration(
+            //           color: Colors.white,
+            //           borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Padding(
+            //             padding: const EdgeInsets.all(20.0),
+            //             child: Text(
+            //               "Upload 5 Files",
+            //               style: GoogleFonts.poppins(
+            //                   color: Colors.black,
+            //                   fontSize: 24,
+            //                   fontWeight: FontWeight.w600),
+            //             ),
+            //           ),
+            //           Padding(
+            //             padding: const EdgeInsets.only(
+            //                 left: 20.0, right: 20.0, bottom: 20.0),
+            //             child: Wrap(
+            //               spacing: 6.0,
+            //               runSpacing: 6.0,
+            //               children: [
+            //                 ...coffee.take(3).map((imagePath) {
+            //                   return ClipRRect(
+            //                     borderRadius: BorderRadius.circular(10),
+            //                     child: Image.asset(
+            //                       imagePath,
+            //                       width: 70,
+            //                       height: 70,
+            //                       fit: BoxFit.cover,
+            //                     ),
+            //                   );
+            //                 }),
+            //                 if (coffee.length > 3)
+            //                   Container(
+            //                     decoration: BoxDecoration(
+            //                       color: const Color(0xFFE8E8E8),
+            //                       borderRadius: BorderRadius.circular(10),
+            //                     ),
+            //                     width: 70,
+            //                     height: 70,
+            //                     alignment: Alignment.center,
+            //                     child: Text(
+            //                       '+${coffee.length - 3}',
+            //                       style: GoogleFonts.poppins(
+            //                         color: Colors.black,
+            //                         fontSize: 20,
+            //                         fontWeight: FontWeight.bold,
+            //                       ),
+            //                     ),
+            //                   ),
+            //               ],
+            //             ),
+            //           ),
+            //           Padding(
+            //             padding: const EdgeInsets.only(
+            //                 left: 20.0, right: 20.0, bottom: 20.0),
+            //             child: Stack(
+            //               alignment: Alignment.topLeft,
+            //               children: [
+            //                 Container(
+            //                   width: MediaQuery.of(context).size.width,
+            //                   height: 10,
+            //                   decoration: BoxDecoration(
+            //                     color: const Color(0xFFE8E8E8),
+            //                     borderRadius: BorderRadius.circular(10),
+            //                   ),
+            //                 ),
+            //                 AnimatedContainer(
+            //                   duration: const Duration(milliseconds: 500),
+            //                   width: 200 * 0.7,
+            //                   height: 10,
+            //                   decoration: BoxDecoration(
+            //                     color: const Color(0xFFBFFA01),
+            //                     borderRadius: BorderRadius.circular(10),
+            //                   ),
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //           Padding(
+            //               padding: const EdgeInsets.only(
+            //                   left: 20.0, right: 20.0, bottom: 20.0),
+            //               child: Row(
+            //                 children: [
+            //                   Row(children: [
+            //                     Text(
+            //                       "Waktu tersisa:",
+            //                       style: GoogleFonts.poppins(
+            //                           color: Colors.black,
+            //                           fontSize: 16,
+            //                           fontWeight: FontWeight.normal),
+            //                     ),
+            //                     const Gap(5),
+            //                     Text(
+            //                       "20 Detik.",
+            //                       style: GoogleFonts.poppins(
+            //                           color: Colors.black,
+            //                           fontSize: 16,
+            //                           fontWeight: FontWeight.bold),
+            //                     ),
+            //                   ]),
+            //                   const Spacer(),
+            //                   Row(children: [
+            //                     Container(
+            //                       width: 34,
+            //                       height: 34,
+            //                       decoration: BoxDecoration(
+            //                           color: const Color(0xFFE8E8E8),
+            //                           borderRadius: BorderRadius.circular(10)),
+            //                       child: const Center(
+            //                         child: Icon(Icons.pause_rounded,
+            //                             color: Color(0xFF7B889B)),
+            //                       ),
+            //                     ),
+            //                     const Gap(5),
+            //                     Container(
+            //                       width: 34,
+            //                       height: 34,
+            //                       decoration: BoxDecoration(
+            //                           color: const Color(0xFFFEF2F2),
+            //                           borderRadius: BorderRadius.circular(10)),
+            //                       child: const Center(
+            //                         child: Icon(Icons.close_rounded,
+            //                             color: Color(0xFFF55858)),
+            //                       ),
+            //                     )
+            //                   ])
+            //                 ],
+            //               )),
+            //         ],
+            //       ),
+            //     )),
+
+
+
+
+                // List<String> coffee = <String>[
+    //   'assets/images/coffee-leaf/64.jpg',
+    //   'assets/images/coffee-leaf/65.jpg',
+    //   'assets/images/coffee-leaf/66.jpg',
+    //   'assets/images/coffee-leaf/67.jpg',
+    //   'assets/images/coffee-leaf/68.jpg',
+    // ];
+
+    const SizedBox(height: 10),
+                // todo: Gejala
+                Text(
+                  "Penyebab:",
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF171717),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  "Penyakit Phoma pada daun kopi ditandai dengan munculnya lesi tidak teratur pada daun tua, yang awalnya berwarna kuning hingga coklat. Seiring perkembangan penyakit, lesi ini akan membesar menjadi bercak yang lebih besar dan berubah menjadi area nekrotik yang kusam, dengan pusat berwarna abu-abu dan tepi yang gelap. Pada tahap akhir infeksi, daun yang terinfeksi mulai layu dan mengalami kerontokan, yang dapat menyebabkan tanaman menjadi gundul jika tidak ditangani dengan baik.",
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF171717),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // todo: solusi
+                Text(
+                  "Solusi:",
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF171717),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  "Untuk mencegah dan mengendalikan penyakit Phoma pada tanaman kopi, beberapa langkah pengendalian kultural dapat diterapkan secara efektif. Pertama, menjaga kebersihan kebun sangat penting; petani harus secara rutin menghilangkan daun-daun yang terinfeksi dan sisa-sisa tanaman untuk mengurangi sumber infeksi. Selain itu, melakukan rotasi tanaman dapat membantu memutus siklus hidup jamur dan mencegah penyebaran penyakit",
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xFF171717),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),

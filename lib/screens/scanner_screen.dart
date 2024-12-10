@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gap/gap.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:iqacs/functions/snackbar_func.dart';
+import 'package:iqacs/providers/diagnosa_provider.dart';
+import 'package:iqacs/providers/forgot_password_provider.dart';
 import 'package:iqacs/screens/analytic_screen.dart';
+import 'package:iqacs/screens/predict_result_screen.dart';
 
 class ScannerScreen extends ConsumerStatefulWidget {
   const ScannerScreen({super.key});
@@ -12,16 +19,71 @@ class ScannerScreen extends ConsumerStatefulWidget {
 }
 
 class ScannerScreenState extends ConsumerState<ScannerScreen> {
+  Future<void> openFilePicker(BuildContext context, WidgetRef ref) async {
+    final loadingNotifier = ref.read(loadingProvider.notifier);
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        try {
+          loadingNotifier.state = true;
+
+          final diagnosa = await ref.read(predictProvider(image).future);
+
+          final message = diagnosa.success
+              ? 'Prediksi berhasil: ${diagnosa.message ?? ''}'
+              : 'Gagal: ${diagnosa.message ?? 'Tidak ada pesan error'}';
+
+          logger.d(message);
+
+          if (context.mounted) {
+            if (diagnosa.success) {
+              showSuccessSnackbar(context, 'Prediksi Berhasil dilakukan');
+              if (diagnosa.diagnosis != null) {
+                Timer(const Duration(seconds: 2), () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PredictResultScreen()));
+                });
+              }
+            } else {
+              showErrorSnackbar(context, message);
+            }
+          }
+        } catch (error) {
+          logger.d('Gagal memproses gambar: $error');
+
+          if (context.mounted) {
+            showErrorSnackbar(context, 'Gagal memproses gambar: $error');
+          }
+        } finally {
+          // Nonaktifkan loading
+          loadingNotifier.state = false;
+        }
+      } else {
+        logger.d('Tidak ada file yang dipilih');
+
+        if (context.mounted) {
+          showErrorSnackbar(context, 'Tidak ada file yang dipilih');
+        }
+      }
+    } catch (error) {
+      logger.d('Gagal mengunggah gambar: $error');
+
+      if (context.mounted) {
+        showErrorSnackbar(context, 'Gagal mengunggah gambar: $error');
+      }
+    } finally {
+      // Pastikan loading dinonaktifkan
+      loadingNotifier.state = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> coffee = <String>[
-      'assets/images/coffee-leaf/64.jpg',
-      'assets/images/coffee-leaf/65.jpg',
-      'assets/images/coffee-leaf/66.jpg',
-      'assets/images/coffee-leaf/67.jpg',
-      'assets/images/coffee-leaf/68.jpg',
-    ];
-
     final List<Map<String, String>> diagnosa = [
       {
         'image': 'assets/images/coffee-leaf/64.jpg',
@@ -177,8 +239,8 @@ class ScannerScreenState extends ConsumerState<ScannerScreen> {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+              padding: const EdgeInsets.only(
+                  top: 10.0, left: 20.0, right: 20.0, bottom: 10.0),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(20.0)),
                 child: Container(
@@ -217,181 +279,68 @@ class ScannerScreenState extends ConsumerState<ScannerScreen> {
                         ),
                       ),
                       Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFBFFA01),
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                fixedSize: const Size.fromHeight(60),
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                        padding: const EdgeInsets.all(20.0),
+                        child: Consumer(
+                          builder: (context, ref, _) {
+                            final isLoading = ref.watch(loadingProvider);
+                            return SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: isLoading
+                                    ? null
+                                    : () => openFilePicker(context, ref),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFBFFA01),
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  fixedSize: const Size.fromHeight(60),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
+                                icon: isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.black,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        'assets/icons/folder.png',
+                                        width: 32,
+                                        height: 32,
+                                      ),
+                                label: isLoading
+                                    ? Text(
+                                        "Loading...",
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                    : Text(
+                                        "Buka Folder",
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
-                              icon: Image.asset(
-                                'assets/icons/folder.png',
-                                width: 32,
-                                height: 32,
-                              ),
-                              label: Text(
-                                "Buka Folder",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          )),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            Padding(
-                padding: const EdgeInsets.only(
-                    top: 10.0, left: 20.0, right: 20.0, bottom: 10.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          "Upload 5 Files",
-                          style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 20.0, right: 20.0, bottom: 20.0),
-                        child: Wrap(
-                          spacing: 6.0,
-                          runSpacing: 6.0,
-                          children: [
-                            ...coffee.take(3).map((imagePath) {
-                              return ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  imagePath,
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            }),
-                            if (coffee.length > 3)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE8E8E8),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                width: 70,
-                                height: 70,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '+${coffee.length - 3}',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 20.0, right: 20.0, bottom: 20.0),
-                        child: Stack(
-                          alignment: Alignment.topLeft,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE8E8E8),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 500),
-                              width: 200 * 0.7,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFBFFA01),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20.0, right: 20.0, bottom: 20.0),
-                          child: Row(
-                            children: [
-                              Row(children: [
-                                Text(
-                                  "Waktu tersisa:",
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                const Gap(5),
-                                Text(
-                                  "20 Detik.",
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ]),
-                              const Spacer(),
-                              Row(children: [
-                                Container(
-                                  width: 34,
-                                  height: 34,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFE8E8E8),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(
-                                    child: Icon(Icons.pause_rounded,
-                                        color: Color(0xFF7B889B)),
-                                  ),
-                                ),
-                                const Gap(5),
-                                Container(
-                                  width: 34,
-                                  height: 34,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFFEF2F2),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(
-                                    child: Icon(Icons.close_rounded,
-                                        color: Color(0xFFF55858)),
-                                  ),
-                                )
-                              ])
-                            ],
-                          )),
-                    ],
-                  ),
-                )),
             Padding(
               padding:
                   const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),

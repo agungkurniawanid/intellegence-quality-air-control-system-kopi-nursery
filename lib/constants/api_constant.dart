@@ -1,6 +1,6 @@
 class ApiConstants {
-  // static const String baseUrl = 'http://192.168.1.6:8000';
-  static const String baseUrl = 'https://nursery-mbkm.research-ai.my.id';
+  static const String baseUrl = 'http://192.168.1.7:8000';
+  // static const String baseUrl = 'https://nursery-mbkm.research-ai.my.id';
 
   // endpoint
   static const String loginEndpoint = '$baseUrl/api/login';
@@ -22,10 +22,9 @@ class ApiConstants {
   static const String updateDataPenggunaWithoutPhotoEndpoint =
       '$baseUrl/api/update-data-pengguna-without-photo/';
   static const String changePasswordEndpoint = '$baseUrl/api/change-password/';
-
-  // api external key
   static const String openWeatherApiKey = '89c748adb995fb8bc8afbe287c41ed51';
-
-  // jika server tidak merespon dalam waktu 30 detik, maka koneksi dibatalkan
+  static const String predictEndpoint = '$baseUrl/api/diagnosa/';
+  static const String getDataPredict = '$baseUrl/api/data-diagnosa';
+  static const String fotoDiagnosaPath = '$baseUrl/diagnosa/';
   static const Duration timeoutDuration = Duration(seconds: 30);
 }

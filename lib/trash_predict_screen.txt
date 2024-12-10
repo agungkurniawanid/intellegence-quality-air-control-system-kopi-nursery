@@ -1,0 +1,439 @@
+import 'dart:ui';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iqacs/constants/api_constant.dart';
+import 'package:iqacs/models/model_data_predict.dart';
+import 'package:iqacs/providers/chart_provider.dart';
+import 'package:iqacs/providers/diagnosa_provider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
+
+class PredictResultScreen extends ConsumerWidget {
+  const PredictResultScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final getResultDiagnosaHandle = ref.watch(getResultDataDiagnosaProvider);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.file);
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image(
+                              image: NetworkImage(
+                                  "${ApiConstants.fotoDiagnosaPath}${data.data.file}"),
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return Image(
+                            image: const AssetImage(
+                                "assets/images/masonry/masonry (1).jpg"),
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                          );
+                        } else {
+                          return const Text('Unknown data type');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 350,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 20,
+                      left: 20,
+                      child: Center(
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.arrow_back_ios_rounded,
+                                            color:
+                                                Colors.white), // Ikon kembali
+                                        onPressed: () {
+                                          // Tindakan saat ikon ditekan
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      const Spacer(), // Menjaga jarak antara ikon dan batas kanan
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // todo: title
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.diagnosa);
+                          final diagnosaCapitalized = data.data.diagnosa
+                              .split(' ')
+                              .map((word) => word.isNotEmpty
+                                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+                                  : word)
+                              .join(' ');
+
+                          return Text(
+                            "(${data.data.id}) $diagnosaCapitalized",
+                            style: GoogleFonts.poppins(
+                              color: const Color(0xFF171717),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return const Text('Default Text!');
+                        } else {
+                          return const Text('Unknown Data');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 50,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                    ),
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.diagnosa);
+
+                          // Mengubah nilai akurasi menjadi double dan format menjadi persentase
+                          final akurasiDouble = double.tryParse(
+                                  data.data.keakuratan.replaceAll('%', '')) ??
+                              0.0;
+                          final akurasiFormatted =
+                              '${akurasiDouble.toStringAsFixed(2)}%'; // Mengatur menjadi 2 desimal
+
+                          return Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFBFFA01),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              "Akurasi: $akurasiFormatted",
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF171717),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return const Text('Default Text!');
+                        } else {
+                          return const Text('Unknown Data');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 30,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // todo: deskripsi analisis
+                const SizedBox(height: 10),
+                getResultDiagnosaHandle.when(
+                  data: (data) {
+                    if (data is SuccessResponsePredict) {
+                      final prompt =
+                          "Jelaskan apa itu penyakit ${data.data.diagnosa} pada daun kopi, termasuk gejala, penyebab, dan cara penanganannya!";
+                      return FutureBuilder<String>(
+                        future: GeminiService(
+                                'AIzaSyAu0Bk-gDla6ua4iLtDIywy0io7UJis_1U')
+                            .fetchGoogleGeminiResponse(prompt),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: 150,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(100)),
+                                        color: Colors.grey[300]),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: 250,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(100)),
+                                        color: Colors.grey[300]),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: 80,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(100)),
+                                        color: Colors.grey[300]),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else if (snapshot.hasError) {
+                            return Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                'Gagal mendapatkan informasi: ${snapshot.error}',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          } else if (snapshot.hasData) {
+                            return SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child: TexMarkdown(
+                                '''${snapshot.data}''',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            );
+                          } else {
+                            return const Center(child: Text('Tidak ada data'));
+                          }
+                        },
+                      );
+                    } else if (data is ErrorResponsePredict) {
+                      return Center(
+                        child: Text(
+                          'Gagal melakukan diagnosa',
+                          style: GoogleFonts.poppins(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const Center(child: Text('Data tidak dikenali'));
+                    }
+                  },
+                  error: (error, stackTrace) => Center(
+                    child: Text(
+                      'Terjadi kesalahan: $error',
+                      style: GoogleFonts.poppins(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  loading: () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 150,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 250,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 80,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GeminiService {
+  final Dio _dio = Dio();
+  final String apiKey;
+
+  GeminiService(this.apiKey);
+
+  Future<String> fetchGoogleGeminiResponse(String prompt) async {
+    try {
+      final response = await _dio.post(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey',
+        data: {
+          'contents': [
+            {
+              'parts': [
+                {'text': prompt}
+              ]
+            }
+          ],
+          'generationConfig': {
+            'maxOutputTokens': 300,
+            'temperature': 0.7,
+          }
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      // Cek respons berhasil
+      if (response.statusCode == 200) {
+        // Ekstrak teks dari respons
+        return response.data['candidates'][0]['content']['parts'][0]['text'];
+      } else {
+        throw Exception('Gagal mendapatkan respons: ${response.statusCode}');
+      }
+    } on DioError catch (e) {
+      // Tangani error spesifik Dio
+      if (e.response != null) {
+        switch (e.response!.statusCode) {
+          case 400:
+            throw Exception('Permintaan tidak valid: ${e.response!.data}');
+          case 401:
+            throw Exception('Tidak terotorisasi. Periksa API key Anda.');
+          case 429:
+            throw Exception(
+                'Batas permintaan API terlampaui. Coba lagi nanti.');
+          case 500:
+            throw Exception('Kesalahan internal server.');
+          default:
+            throw Exception('Kesalahan API: ${e.response!.statusCode}');
+        }
+      } else {
+        // Error koneksi atau timeout
+        throw Exception('Gagal terhubung ke server: ${e.message}');
+      }
+    } catch (e) {
+      // Tangani error umum
+      throw Exception('Kesalahan tidak terduga: $e');
+    }
+  }
+}

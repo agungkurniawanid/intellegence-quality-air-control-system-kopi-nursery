@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
 final sensorDataProvider = StateProvider<List<String>>((ref) {
-  return ["Alat 1", "Alat 2", "Alat 3", "Alat 4"];
+  return ["Alat 1", "Alat 2"];
 });
 
 final selectedIndexProvider = StateProvider<int>((ref) => 0);

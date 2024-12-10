@@ -12,8 +12,8 @@ final dioProviderConstant = Provider((ref) {
   };
 
   // Tambahkan timeout
-  dio.options.connectTimeout = const Duration(seconds: 10);
-  dio.options.receiveTimeout = const Duration(seconds: 10);
+  dio.options.connectTimeout = const Duration(seconds: 30);
+  dio.options.receiveTimeout = const Duration(seconds: 30);
 
   // Tambahkan interceptor untuk logging
   dio.interceptors.add(InterceptorsWrapper(
