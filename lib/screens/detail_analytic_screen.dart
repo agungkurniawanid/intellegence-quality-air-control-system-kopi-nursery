@@ -1,32 +1,75 @@
 import 'dart:ui';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:iqacs/constants/api_constant.dart';
+import 'package:iqacs/models/model_data_predict.dart';
 
-class DetailAnalyticScreen extends ConsumerWidget {
-  const DetailAnalyticScreen({super.key});
+import 'package:iqacs/providers/diagnosa_provider.dart';
+import 'package:iqacs/providers/forgot_password_provider.dart';
+import 'package:shimmer/shimmer.dart';
+
+class DetailAnalyticScreen extends ConsumerStatefulWidget {
+  final String id;
+  const DetailAnalyticScreen({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DetailAnalyticScreen> createState() =>
+      _DetailAnalyticScreenState();
+}
+
+class _DetailAnalyticScreenState extends ConsumerState<DetailAnalyticScreen> {
+  final ScrollController _scrollController = ScrollController();
+  @override
+  Widget build(BuildContext context) {
+    final getResultDiagnosaHandle = ref.watch(getDetailDataDiagnosa(widget.id));
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // todo image
                 Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image(
-                        image: const AssetImage(
-                            "assets/images/masonry/masonry (6).jpg"),
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.file);
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image(
+                              image: NetworkImage(
+                                  "${ApiConstants.fotoDiagnosaPath}${data.data.file}"),
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return Image(
+                            image: const AssetImage(
+                                "assets/images/masonry/masonry (1).jpg"),
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                          );
+                        } else {
+                          return const Text('Unknown data type');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 350,
+                          color: Colors.grey[300],
+                        ),
                       ),
                     ),
                     Positioned(
@@ -81,25 +124,89 @@ class DetailAnalyticScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "(701) Phoma",
-                      style: GoogleFonts.poppins(
-                          color: const Color(0xFF171717),
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFBFFA01),
-                        borderRadius: BorderRadius.circular(100),
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.diagnosa);
+                          final diagnosaCapitalized = data.data.diagnosa
+                              .split(' ')
+                              .map((word) => word.isNotEmpty
+                                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+                                  : word)
+                              .join(' ');
+
+                          return Text(
+                            "(${data.data.id}) $diagnosaCapitalized",
+                            style: GoogleFonts.poppins(
+                              color: const Color(0xFF171717),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return const Text('Default Text!');
+                        } else {
+                          return const Text('Unknown Data');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 50,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
                       ),
-                      child: Text(
-                        "Akurasi: 90,10%",
-                        style: GoogleFonts.poppins(
-                          color: const Color(0xFF171717),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                    ),
+                    getResultDiagnosaHandle.when(
+                      data: (data) {
+                        if (data is SuccessResponsePredict) {
+                          logger.d(data.data.diagnosa);
+
+                          // Mengubah nilai akurasi menjadi double dan format menjadi persentase
+                          final akurasiDouble = double.tryParse(
+                                  data.data.keakuratan.replaceAll('%', '')) ??
+                              0.0;
+                          final akurasiFormatted =
+                              '${akurasiDouble.toStringAsFixed(2)}%'; // Mengatur menjadi 2 desimal
+
+                          return Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFBFFA01),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              "Akurasi: $akurasiFormatted",
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF171717),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        } else if (data is ErrorResponsePredict) {
+                          return const Text('Default Text!');
+                        } else {
+                          return const Text('Unknown Data');
+                        }
+                      },
+                      error: (error, stackTrace) => Text(error.toString()),
+                      loading: () => Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 30,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
                         ),
                       ),
                     ),
@@ -107,55 +214,122 @@ class DetailAnalyticScreen extends ConsumerWidget {
                 ),
                 // todo: deskripsi analisis
                 const SizedBox(height: 10),
-                Text(
-                  "Rhizoctonia solani adalah patogen tular tanah yang dapat menyebabkan penyakit rebah batang/rebah kecambah/damping off pada benih tanaman kopi.",
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFF171717),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                getResultDiagnosaHandle.when(
+                  data: (data) {
+                    if (data is SuccessResponsePredict) {
+                      final animationNotifier =
+                          ref.read(loadingProvider.notifier);
+                      final isAnimationFinished = ref.watch(loadingProvider);
+                      return isAnimationFinished
+                          ? TexMarkdown(
+                              '''${data.data.deskripsi}''',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14,
+                              ),
+                            )
+                          : AnimatedTextKit(
+                              totalRepeatCount: 1,
+                              animatedTexts: [
+                                TypewriterAnimatedText(
+                                  "${data.data.deskripsi}",
+                                  textStyle: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14,
+                                  ),
+                                  speed: const Duration(milliseconds: 7),
+                                ),
+                              ],
+                              onFinished: () {
+                                animationNotifier.state = true;
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOut,
+                                  );
+                                });
+                              },
+                            );
+                    } else if (data is ErrorResponsePredict) {
+                      return const Text('Default Text!');
+                    } else {
+                      return const Text('Unknown Data');
+                    }
+                  },
+                  error: (error, stackTrace) => Center(
+                    child: Text(
+                      'Terjadi kesalahan: $error',
+                      style: GoogleFonts.poppins(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                // todo: Gejala
-                Text(
-                  "Gejala:",
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFF171717),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                  loading: () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 150,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 250,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 80,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(100)),
+                              color: Colors.grey[300]),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "Penyakit Phoma pada daun kopi ditandai dengan munculnya lesi tidak teratur pada daun tua, yang awalnya berwarna kuning hingga coklat. Seiring perkembangan penyakit, lesi ini akan membesar menjadi bercak yang lebih besar dan berubah menjadi area nekrotik yang kusam, dengan pusat berwarna abu-abu dan tepi yang gelap. Pada tahap akhir infeksi, daun yang terinfeksi mulai layu dan mengalami kerontokan, yang dapat menyebabkan tanaman menjadi gundul jika tidak ditangani dengan baik.",
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFF171717),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                // todo: solusi
-                Text(
-                  "Solusi:",
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFF171717),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  "Untuk mencegah dan mengendalikan penyakit Phoma pada tanaman kopi, beberapa langkah pengendalian kultural dapat diterapkan secara efektif. Pertama, menjaga kebersihan kebun sangat penting; petani harus secara rutin menghilangkan daun-daun yang terinfeksi dan sisa-sisa tanaman untuk mengurangi sumber infeksi. Selain itu, melakukan rotasi tanaman dapat membantu memutus siklus hidup jamur dan mencegah penyebaran penyakit",
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFF171717),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                )
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Jangan lupa dispose ScrollController
+    _scrollController.dispose();
+    super.dispose();
   }
 }

@@ -25,6 +25,8 @@ class ApiConstants {
   static const String openWeatherApiKey = '89c748adb995fb8bc8afbe287c41ed51';
   static const String predictEndpoint = '$baseUrl/api/diagnosa/';
   static const String getDataPredict = '$baseUrl/api/data-diagnosa';
+  static const String getDataPredictDetail =
+      '$baseUrl/api/data-diagnosa-detail';
   static const String fotoDiagnosaPath = '$baseUrl/diagnosa/';
   static const Duration timeoutDuration = Duration(seconds: 30);
 }

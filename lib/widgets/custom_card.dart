@@ -409,8 +409,10 @@ class CustomCardSprayer extends ConsumerWidget {
                     if (context.mounted) {
                       if (newState) {
                         showNotificationSpraying(context, true);
+                        logger.d("Notifikasi: Pompa menyala");
                       } else {
                         showNotificationSpraying(context, false);
+                        logger.d("Notifikasi: Pompa mati");
                       }
                     }
                   } catch (e) {

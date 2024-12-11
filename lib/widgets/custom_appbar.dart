@@ -87,7 +87,18 @@ class CustomAppbar extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  loading: () => const CircularProgressIndicator(),
+                  loading: () => Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 100,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(100)),
+                          color: Colors.grey[300]),
+                    ),
+                  ),
                   error: (error, _) => Text(
                     "Pagi, User!",
                     style: GoogleFonts.poppins(

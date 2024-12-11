@@ -45,6 +45,11 @@ class DataPredict {
       updatedAt: DateTime.parse(json['updated_at']),
     );
   }
+
+  @override
+  String toString() {
+    return 'DataPredict(id: $id, idUser: $idUser, file: $file, diagnosa: $diagnosa, keakuratan: $keakuratan, deskripsi: $deskripsi, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
 }
 
 class SuccessResponsePredict {

@@ -22,7 +22,8 @@ class _PredictResultScreenState extends ConsumerState<PredictResultScreen> {
   final ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    final getResultDiagnosaHandle = ref.watch(getResultDataDiagnosaProvider);
+    final getResultDiagnosaHandle =
+        ref.watch(getResultDataDiagnosaProvider("terbaru"));
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -326,7 +327,6 @@ class _PredictResultScreenState extends ConsumerState<PredictResultScreen> {
 
   @override
   void dispose() {
-    // Jangan lupa dispose ScrollController
     _scrollController.dispose();
     super.dispose();
   }
