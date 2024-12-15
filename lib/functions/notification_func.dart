@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// notifikasi untuk penyemprotan
 void showNotificationSpraying(BuildContext context, bool isSwitchOn) {
   OverlayEntry overlayEntry;
   overlayEntry = OverlayEntry(

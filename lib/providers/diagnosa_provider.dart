@@ -45,17 +45,13 @@ final predictProvider =
     logger.d('Response status: ${response.statusCode}');
     logger.d('Response data: ${response.data}');
 
-    // Pastikan response.data adalah Map
     if (response.data is Map<String, dynamic>) {
-      // Cek apakah kunci 'success' ada di response
       if (response.data.containsKey('success')) {
         return Diagnosa.fromJson(response.data);
       } else {
-        // Jika tidak ada kunci 'success', kembalikan diagnosa dengan status error
         return Diagnosa(success: false, message: 'Format respons tidak sesuai');
       }
     } else {
-      // Jika bukan Map, kembalikan diagnosa error
       return Diagnosa(success: false, message: 'Format respons tidak dikenal');
     }
   } on DioException catch (e) {
@@ -64,7 +60,6 @@ final predictProvider =
     logger.e('Response status: ${e.response?.statusCode}');
 
     if (e.response != null && e.response?.data is Map<String, dynamic>) {
-      // Coba parsing error response
       try {
         return Diagnosa.fromJson(e.response!.data);
       } catch (_) {

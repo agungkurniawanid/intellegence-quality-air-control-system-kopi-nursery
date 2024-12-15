@@ -2,7 +2,7 @@
 flutter clean
 
 # Hapus folder build
-rm -rf build/
+Remove-Item -Recurse -Force build
 
 # Update dependencies
 flutter pub get

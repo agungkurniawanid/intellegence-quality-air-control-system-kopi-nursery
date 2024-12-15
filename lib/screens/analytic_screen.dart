@@ -83,8 +83,6 @@ class _AnalyticScreenState extends ConsumerState<AnalyticScreen> {
                                               id: listData[index]
                                                   .id
                                                   .toString()),
-                                      maintainState: true,
-                                      fullscreenDialog: true,
                                     ),
                                   );
                                 },

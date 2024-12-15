@@ -11,11 +11,9 @@ final dioProviderConstant = Provider((ref) {
     'Accept': 'application/json'
   };
 
-  // Tambahkan timeout
   dio.options.connectTimeout = const Duration(seconds: 30);
   dio.options.receiveTimeout = const Duration(seconds: 30);
 
-  // Tambahkan interceptor untuk logging
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
       logger.d('REQUEST[${options.method}] => PATH: ${options.path}');

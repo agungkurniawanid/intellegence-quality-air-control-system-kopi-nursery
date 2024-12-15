@@ -85,18 +85,15 @@ class DateRangeNotifier extends StateNotifier<DateTimeRange> {
 }
 
 Future<void> exportToExcel(ChartResponse chartData, context) async {
-  // Membuat workbook baru
   var excel = esel.Excel.createExcel();
   esel.Sheet sheet = excel['Sheet1'];
 
-  // Menambahkan header dengan gaya (opsional)
   esel.CellStyle cellStyle = esel.CellStyle(
     fontFamily: esel.getFontFamily(esel.FontFamily.Calibri),
     fontSize: 12,
     bold: true,
   );
 
-  // Menambahkan header
   sheet.cell(esel.CellIndex.indexByString('A1')).value =
       esel.TextCellValue('Tanggal');
   sheet.cell(esel.CellIndex.indexByString('B1')).value =
@@ -104,15 +101,13 @@ Future<void> exportToExcel(ChartResponse chartData, context) async {
   sheet.cell(esel.CellIndex.indexByString('C1')).value =
       esel.TextCellValue('Rata-rata Kelembapan');
 
-  // Mengatur gaya untuk header
   sheet.cell(esel.CellIndex.indexByString('A1')).cellStyle = cellStyle;
   sheet.cell(esel.CellIndex.indexByString('B1')).cellStyle = cellStyle;
   sheet.cell(esel.CellIndex.indexByString('C1')).cellStyle = cellStyle;
 
-  // Menambahkan data dari chartData
   for (int i = 0; i < chartData.data.length; i++) {
     var data = chartData.data[i];
-    int rowIndex = i + 2; // Mulai dari baris 2 untuk data
+    int rowIndex = i + 2;
     sheet.cell(esel.CellIndex.indexByString('A$rowIndex')).value =
         esel.DateTimeCellValue(
       year: int.parse(data.tanggal.split('-')[0]),
@@ -127,7 +122,6 @@ Future<void> exportToExcel(ChartResponse chartData, context) async {
         esel.DoubleCellValue(data.avgHumidity);
   }
 
-  // Mendapatkan direktori Downloads
   String downloadsPath = 'storage/emulated/0/Download';
   Directory(downloadsPath).createSync(recursive: true);
 
@@ -135,7 +129,6 @@ Future<void> exportToExcel(ChartResponse chartData, context) async {
   String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
   String filePath = '$downloadsPath/chart_data_$timestamp.xlsx';
 
-  // Menyimpan file Excel
   File(filePath)
     ..createSync(recursive: true)
     ..writeAsBytesSync(excel.encode()!);
